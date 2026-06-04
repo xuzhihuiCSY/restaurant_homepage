@@ -44,7 +44,7 @@
 
     let paused = false;
     let lastFrame = null;
-    const speed = 58;
+    const speed = 130;
 
     function step(timestamp) {
         if (lastFrame === null) {
