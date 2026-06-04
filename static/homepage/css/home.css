@@ -269,24 +269,15 @@ h3 {
     overscroll-behavior-inline: contain;
     padding: 0 clamp(20px, 5vw, 72px) 14px;
     scroll-padding-inline: clamp(20px, 5vw, 72px);
+    scrollbar-width: none;
+}
+
+.recommendation-strip::-webkit-scrollbar {
+    display: none;
 }
 
 .recommendation-strip .menu-card {
     min-width: 0;
-}
-
-.recommendation-strip::-webkit-scrollbar {
-    height: 10px;
-}
-
-.recommendation-strip::-webkit-scrollbar-track {
-    background: #eee7dc;
-    border-radius: 999px;
-}
-
-.recommendation-strip::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 999px;
 }
 
 .item-grid.compact {
