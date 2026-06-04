@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class RestaurantProfile(models.Model):
@@ -21,29 +22,12 @@ class RestaurantProfile(models.Model):
         return self.name
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=80)
-    order = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        ordering = ["order", "name"]
-        verbose_name_plural = "Categories"
-
-    def __str__(self):
-        return self.name
-
-
-class MenuItem(models.Model):
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        related_name="items",
-    )
+class DailyRecommendation(models.Model):
     name = models.CharField(max_length=120)
     description = models.TextField(blank=True)
-    base_price = models.DecimalField(max_digits=8, decimal_places=2)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    display_date = models.DateField(default=timezone.localdate)
     is_available = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=False)
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(
         max_digits=8,
@@ -51,17 +35,17 @@ class MenuItem(models.Model):
         blank=True,
         null=True,
     )
-    image = models.ImageField(upload_to="menu/", blank=True)
+    image = models.ImageField(upload_to="recommendations/", blank=True)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["category__order", "order", "name"]
+        ordering = ["display_date", "order", "name"]
 
     def clean(self):
         if self.is_on_sale and self.sale_price is None:
             raise ValidationError({"sale_price": "Sale price is required for sale items."})
-        if self.sale_price is not None and self.sale_price >= self.base_price:
-            raise ValidationError({"sale_price": "Sale price should be lower than base price."})
+        if self.sale_price is not None and self.sale_price >= self.price:
+            raise ValidationError({"sale_price": "Sale price should be lower than regular price."})
 
     def __str__(self):
         return self.name

@@ -8,3 +8,4 @@ class HomePageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Restaurant Name")
+        self.assertContains(response, "Chef recommended dishes")

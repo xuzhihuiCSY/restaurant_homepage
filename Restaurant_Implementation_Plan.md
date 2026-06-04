@@ -1,8 +1,8 @@
 # Restaurant Website Implementation Plan / 餐厅网站开发实施方案
 
-This document outlines the technical implementation plan for a responsive restaurant homepage built with Django-rendered HTML templates. The page highlights restaurant information, featured menu items, promotions, upcoming events, and basic contact/location details.
+This document outlines the technical implementation plan for a responsive restaurant homepage built with Django-rendered HTML templates. The page highlights restaurant information, today's recommended dishes, upcoming events, and basic contact/location details.
 
-本文件概述 food/餐饮 网站首页的开发实施方案。项目采用 Django + HTML 模板实现，不做前后端分离。首页包含餐厅介绍、推荐菜品、打折特惠、近期活动、联系方式与地址信息，并可通过 Django Admin 管理基础内容。
+本文件概述 food/餐饮 网站首页的开发实施方案。项目采用 Django + HTML 模板实现，不做前后端分离。首页只展示餐厅介绍、今日推荐菜、近期活动、联系方式与地址信息，不承载完整菜单。
 
 ---
 
@@ -20,20 +20,18 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
     * Uses Django templates for page structure and static CSS/JS for responsive layout and lightweight interactions.
     * 使用 Django 模板组织页面结构，通过静态 CSS/JS 实现响应式布局和少量交互。
 * **Database (数据库):** SQLite (Development / Small Deployment)
-    * Relational database to accurately maintain menu relationships, pricing schedules, and event details.
-    * 关系型数据库，用于准确维护菜单关联、价格策略和活动信息。
+    * Relational database to maintain homepage content, daily recommendations, pricing, and event details.
+    * 关系型数据库，用于维护首页内容、今日推荐菜、价格和活动信息。
 
 ---
 
 ## 2. Core Feature Specifications / 核心功能规范
 
 ### 2.1 Public Homepage (Read-Only) / 公开首页（只读）
-* **Hero Section (首页首屏):** Displays the restaurant name, core selling point, opening status, and primary call-to-action such as viewing the menu or calling the restaurant.
-    * 展示餐厅名称、核心卖点、营业状态，以及查看菜单或拨打电话等主要操作入口。
-* **Featured Menu Display (推荐菜品展示):** Displays selected dishes grouped by category or priority.
-    * 展示后台配置的推荐菜品，可按分类或展示顺序排列。
-* **On-Sale Items Section (打折特惠专区):** A dedicated section on the homepage that automatically displays items with active promotional pricing or limited-time discounts.
-    * 首页特设专区，自动展示带有促销价格或限时折扣的菜品。
+* **Hero Section (首页首屏):** Displays the restaurant name, core selling point, opening status, and primary call-to-action such as viewing today's recommendations or calling the restaurant.
+    * 展示餐厅名称、核心卖点、营业状态，以及查看今日推荐菜或拨打电话等主要操作入口。
+* **Today's Recommended Dishes (今日推荐菜):** Displays a small curated list of dishes for the current day. This is not a full menu.
+    * 展示当天精选的少量推荐菜品，不展示完整菜单。
 * **Upcoming Events List (近期活动列表):** A simple homepage list displaying community events, holiday specials, or live music scheduled at the venue.
     * 简洁列表展示餐厅计划举办的社区活动、节日特惠或现场音乐会。
 * **Contact & Location Section (联系方式与地址):** Displays phone number, address, opening hours, and an optional embedded map link.
@@ -44,10 +42,10 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
 ### 2.2 Owner Administration Panel (Read/Write) / 商家管理后台（读写）
 * **Secure Authentication (安全身份验证):** Access limited strictly to users with `is_staff` or `is_superuser` flags using Django's native session-based authentication. General site visitors cannot view or access this path.
     * 利用 Django 原生的 Session 身份验证，访问权限严格限制为具有 `is_staff` 或 `is_superuser` 标签的用户。普通访客无法查看或访问此路径。
-* **Content Management Dashboard (内容管理仪表盘):** Django Admin forms for the owner to add, modify, or delete menu listings, update prices, and schedule new events without writing code.
-    * 通过 Django Admin 表单，供所有者在不编写代码的情况下添加、修改或删除菜单、更新价格以及安排新活动。
-* **Availability & Promotion Toggles (供应状态与促销开关):** Quick checkboxes to instantly toggle items as "Out of Stock" or mark them "On Sale" with a dynamic markdown price field.
-    * 快捷复选框，可立即将菜品切换为“售罄”状态，或勾选“打折”并填写动态折扣价。
+* **Content Management Dashboard (内容管理仪表盘):** Django Admin forms for the owner to update restaurant information, maintain today's recommended dishes, and schedule new events without writing code.
+    * 通过 Django Admin 表单，供所有者在不编写代码的情况下更新餐厅信息、维护今日推荐菜以及安排新活动。
+* **Availability & Promotion Toggles (供应状态与促销开关):** Quick checkboxes to hide unavailable recommendations or mark a recommendation as on sale with a discount price.
+    * 快捷复选框，可隐藏不可供应的推荐菜，或为推荐菜设置折扣价。
 
 ---
 
@@ -56,18 +54,26 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
 The Django app uses a small set of models to power the homepage content:
 Django 应用使用少量模型支持首页内容展示：
 
-### Category Model (菜品分类模型)
-* `name` (CharField): Name of the category (e.g., "Mains" / "主菜").
-* `order` (IntegerField): Display weight for ordering categories on the homepage.
+### RestaurantProfile Model (餐厅信息模型)
+* `name` (CharField): Restaurant name.
+* `tagline` (CharField): Short homepage slogan.
+* `description` (TextField): Introductory copy.
+* `phone` (CharField): Contact phone number.
+* `address` (CharField): Restaurant address.
+* `opening_hours` (CharField): Business hours.
+* `map_url` (URLField): Optional map link.
+* `hero_image` (ImageField): Homepage hero image.
 
-### MenuItem Model (菜品模型)
+### DailyRecommendation Model (今日推荐菜模型)
 * `name` (CharField): Name of the dish.
 * `description` (TextField): Ingredients, allergies, or item details.
-* `base_price` (DecimalField): Standard price.
-* `is_on_sale` (BooleanField): Toggles inclusion in the promotional homepage banner.
+* `price` (DecimalField): Regular price.
+* `display_date` (DateField): Date when the dish should appear on the homepage.
+* `is_available` (BooleanField): Toggles whether the recommendation is visible.
+* `is_on_sale` (BooleanField): Toggles display of a promotional price.
 * `sale_price` (DecimalField, optional): Promotional price when `is_on_sale` is True.
 * `image` (ImageField): Photo of the dish.
-* `category` (ForeignKey): Links to the Category model.
+* `order` (IntegerField): Display order for today's recommendations.
 
 ### Event Model (活动模型)
 * `title` (CharField): Event headline (e.g., "Live Jazz Night").
@@ -81,11 +87,11 @@ Django 应用使用少量模型支持首页内容展示：
 ## 4. Development Roadmap / 开发时间线与路线图
 
 * **Phase 1: Django Setup & Models / 第一阶段：Django 项目搭建与模型设计**
-    * Initialize the Django project and homepage app. Create database models for categories, menu items, events, and optional restaurant profile information.
-    * 初始化 Django 项目和首页应用。创建菜品分类、菜品、活动，以及可选的餐厅基础信息模型。
+    * Initialize the Django project and homepage app. Create database models for restaurant profile information, daily recommendations, and events.
+    * 初始化 Django 项目和首页应用。创建餐厅基础信息、今日推荐菜和活动模型。
 * **Phase 2: Admin & Content Management / 第二阶段：后台管理与内容维护**
-    * Configure Django Admin with streamlined forms, image upload support, display ordering, and promotion toggles.
-    * 配置 Django Admin，支持简化表单、图片上传、展示排序和促销开关。
+    * Configure Django Admin with streamlined forms, image upload support, display ordering, and promotion toggles for daily recommendations.
+    * 配置 Django Admin，支持今日推荐菜的简化表单、图片上传、展示排序和促销开关。
 * **Phase 3: HTML Template Homepage / 第三阶段：首页 HTML 模板开发**
     * Build the homepage with Django templates, static CSS, and minimal JavaScript for navigation, responsive behavior, and simple interactions.
     * 使用 Django 模板、静态 CSS 和少量 JavaScript 开发首页，实现导航、响应式布局和基础交互。

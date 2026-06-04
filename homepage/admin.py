@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Event, MenuItem, RestaurantProfile
+from .models import DailyRecommendation, Event, RestaurantProfile
 
 
 @admin.register(RestaurantProfile)
@@ -13,36 +13,28 @@ class RestaurantProfileAdmin(admin.ModelAdmin):
         return super().has_add_permission(request)
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "order")
-    list_editable = ("order",)
-    ordering = ("order", "name")
-
-
-@admin.register(MenuItem)
-class MenuItemAdmin(admin.ModelAdmin):
+@admin.register(DailyRecommendation)
+class DailyRecommendationAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "category",
-        "base_price",
+        "display_date",
+        "price",
         "sale_price",
         "is_available",
-        "is_featured",
         "is_on_sale",
         "order",
     )
     list_editable = (
-        "base_price",
+        "display_date",
+        "price",
         "sale_price",
         "is_available",
-        "is_featured",
         "is_on_sale",
         "order",
     )
-    list_filter = ("category", "is_available", "is_featured", "is_on_sale")
+    list_filter = ("display_date", "is_available", "is_on_sale")
     search_fields = ("name", "description")
-    ordering = ("category__order", "order", "name")
+    ordering = ("-display_date", "order", "name")
 
 
 @admin.register(Event)

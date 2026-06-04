@@ -85,7 +85,7 @@ img {
 }
 
 .eyebrow,
-.category-label {
+.dish-label {
     margin: 0 0 10px;
     color: var(--leaf);
     font-size: 0.78rem;
@@ -206,8 +206,7 @@ h3 {
 }
 
 .menu-card,
-.event-card,
-.category-block {
+.event-card {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel);
@@ -228,8 +227,7 @@ h3 {
     padding: 18px;
 }
 
-.menu-card-body p:not(.category-label),
-.menu-row p,
+.menu-card-body p:not(.dish-label),
 .event-card p {
     color: var(--muted);
 }
@@ -247,27 +245,6 @@ h3 {
     color: var(--muted);
     font-weight: 600;
     text-decoration: line-through;
-}
-
-.menu-list {
-    display: grid;
-    gap: 18px;
-}
-
-.category-block {
-    padding: 22px;
-}
-
-.menu-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 18px;
-    padding: 16px 0;
-    border-top: 1px solid var(--line);
-}
-
-.menu-row:first-of-type {
-    margin-top: 10px;
 }
 
 .event-list {
@@ -360,7 +337,6 @@ h3 {
         grid-template-columns: 1fr;
     }
 
-    .menu-row,
     .event-card {
         grid-template-columns: 1fr;
     }

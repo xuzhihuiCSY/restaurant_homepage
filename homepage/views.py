@@ -1,10 +1,9 @@
 from types import SimpleNamespace
 
-from django.db.models import Prefetch
 from django.shortcuts import render
 from django.utils import timezone
 
-from .models import Category, Event, MenuItem, RestaurantProfile
+from .models import DailyRecommendation, Event, RestaurantProfile
 
 
 def home(request):
@@ -19,19 +18,14 @@ def home(request):
         hero_image=None,
     )
 
-    visible_items = MenuItem.objects.filter(is_available=True)
-    categories = Category.objects.prefetch_related(
-        Prefetch("items", queryset=visible_items.order_by("order", "name"))
-    )
-    featured_items = visible_items.filter(is_featured=True).select_related("category")[:6]
-    sale_items = (
-        visible_items.filter(is_on_sale=True, sale_price__isnull=False)
-        .select_related("category")
-        [:4]
-    )
+    today = timezone.localdate()
+    recommendations = DailyRecommendation.objects.filter(
+        is_available=True,
+        display_date=today,
+    )[:6]
     upcoming_events = Event.objects.filter(
         is_published=True,
-        event_date__gte=timezone.localdate(),
+        event_date__gte=today,
     )[:3]
 
     return render(
@@ -39,9 +33,7 @@ def home(request):
         "homepage/home.html",
         {
             "profile": profile,
-            "categories": categories,
-            "featured_items": featured_items,
-            "sale_items": sale_items,
+            "recommendations": recommendations,
             "upcoming_events": upcoming_events,
         },
     )

@@ -1,6 +1,6 @@
 # Restaurant Homepage
 
-A simple Django-rendered restaurant homepage. The project uses Django views, templates, static CSS, SQLite, and Django Admin for content management.
+A simple Django-rendered restaurant homepage. The project uses Django views, templates, static CSS, SQLite, and Django Admin to manage restaurant information, today's recommended dishes, and events.
 
 ## Local Setup
 

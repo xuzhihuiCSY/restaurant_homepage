@@ -3,17 +3,17 @@
         <img src="{{ item.image.url }}" alt="{{ item.name }}">
     {% endif %}
     <div class="menu-card-body">
-        <p class="category-label">{{ item.category.name }}</p>
+        <p class="dish-label">Today's pick</p>
         <h3>{{ item.name }}</h3>
         {% if item.description %}
             <p>{{ item.description }}</p>
         {% endif %}
         <div class="price">
             {% if item.is_on_sale and item.sale_price %}
-                <span class="old-price">${{ item.base_price }}</span>
+                <span class="old-price">${{ item.price }}</span>
                 <span>${{ item.sale_price }}</span>
             {% else %}
-                <span>${{ item.base_price }}</span>
+                <span>${{ item.price }}</span>
             {% endif %}
         </div>
     </div>
