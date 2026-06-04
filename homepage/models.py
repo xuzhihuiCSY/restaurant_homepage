@@ -6,10 +6,23 @@ from django.utils import timezone
 
 
 class RestaurantProfile(models.Model):
+    CONTACT_PHONE = "phone"
+    CONTACT_EMAIL = "email"
+    CONTACT_METHOD_CHOICES = [
+        (CONTACT_PHONE, "Phone"),
+        (CONTACT_EMAIL, "Email"),
+    ]
+
     name = models.CharField(max_length=120, default="Restaurant Name")
     tagline = models.CharField(max_length=180, blank=True)
     description = models.TextField(blank=True)
     phone = models.CharField(max_length=40, blank=True)
+    email = models.EmailField(blank=True)
+    primary_contact_method = models.CharField(
+        max_length=10,
+        choices=CONTACT_METHOD_CHOICES,
+        default=CONTACT_PHONE,
+    )
     address = models.CharField(max_length=255, blank=True)
     opening_hours = models.CharField(max_length=180, blank=True)
     map_url = models.URLField(blank=True)

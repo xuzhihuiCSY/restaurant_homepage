@@ -17,6 +17,8 @@ class RestaurantProfileForm(forms.ModelForm):
             "tagline",
             "description",
             "phone",
+            "email",
+            "primary_contact_method",
             "address",
             "opening_hours",
             "map_url",

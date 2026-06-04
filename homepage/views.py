@@ -27,6 +27,8 @@ def home(request):
         tagline="Fresh food, warm service",
         description="A simple Django-powered restaurant homepage.",
         phone="",
+        email="",
+        primary_contact_method=RestaurantProfile.CONTACT_PHONE,
         address="",
         opening_hours="",
         map_url="",

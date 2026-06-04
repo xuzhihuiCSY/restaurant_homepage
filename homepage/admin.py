@@ -11,7 +11,7 @@ from .models import (
 
 @admin.register(RestaurantProfile)
 class RestaurantProfileAdmin(admin.ModelAdmin):
-    list_display = ("name", "phone", "updated_at")
+    list_display = ("name", "phone", "email", "primary_contact_method", "updated_at")
 
     def has_add_permission(self, request):
         if RestaurantProfile.objects.exists():

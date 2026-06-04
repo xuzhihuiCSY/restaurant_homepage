@@ -80,6 +80,20 @@ class HomePageTests(TestCase):
         self.assertContains(response, "has-review-background")
         self.assertContains(response, "restaurant/reviews.jpg")
 
+    def test_profile_email_and_email_contact_preference_render(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            phone="555-0100",
+            email="hello@example.com",
+            primary_contact_method=RestaurantProfile.CONTACT_EMAIL,
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, 'href="mailto:hello@example.com"')
+        self.assertContains(response, "Email us")
+        self.assertContains(response, "hello@example.com")
+
 
 class OwnerControlsTests(TestCase):
     def test_owner_dashboard_requires_staff_login(self):

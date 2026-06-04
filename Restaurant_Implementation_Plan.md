@@ -38,8 +38,8 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
     * 在首页首屏和今日推荐菜之间展示 owner 管理的餐厅照片。
 * **Upcoming Events List (近期活动列表):** A simple homepage list displaying community events, holiday specials, or live music scheduled at the venue.
     * 简洁列表展示餐厅计划举办的社区活动、节日特惠或现场音乐会。
-* **Contact & Location Section (联系方式与地址):** Displays phone number, address, opening hours, and an optional embedded map link.
-    * 展示电话、地址、营业时间，以及可选的地图链接。
+* **Contact & Location Section (联系方式与地址):** Displays phone number, email, address, opening hours, and an optional embedded map link. The owner can choose whether the hero contact button prioritizes phone or email.
+    * 展示电话、邮箱、地址、营业时间，以及可选的地图链接。Owner 可以选择首页首屏联系按钮优先使用电话或邮箱。
 * **Mobile-First Responsive Design (移动端优先响应式设计):** Highly optimized layout for smartphones, as the majority of restaurant patrons check menus on mobile web browsers.
     * 针对智能手机进行高度优化，因为绝大多数餐厅顾客都会使用手机浏览器查看菜单。
 
@@ -65,6 +65,8 @@ Django 应用使用少量模型支持首页内容展示：
 * `tagline` (CharField): Short homepage slogan.
 * `description` (TextField): Introductory copy.
 * `phone` (CharField): Contact phone number.
+* `email` (EmailField): Contact email address.
+* `primary_contact_method` (CharField): Chooses whether the hero contact button prioritizes phone or email.
 * `address` (CharField): Restaurant address.
 * `opening_hours` (CharField): Business hours.
 * `map_url` (URLField): Optional map link.

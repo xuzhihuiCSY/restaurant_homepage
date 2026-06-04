@@ -31,8 +31,12 @@
                 <p>{{ profile.description|default:"Fresh food, warm service, and a simple place to gather." }}</p>
                 <div class="hero-actions">
                     <a class="button primary" href="#recommendations">Today's dishes</a>
-                    {% if profile.phone %}
+                    {% if profile.primary_contact_method == "email" and profile.email %}
+                        <a class="button secondary" href="mailto:{{ profile.email }}">Email us</a>
+                    {% elif profile.phone %}
                         <a class="button secondary" href="tel:{{ profile.phone }}">Call now</a>
+                    {% elif profile.email %}
+                        <a class="button secondary" href="mailto:{{ profile.email }}">Email us</a>
                     {% endif %}
                 </div>
             </div>
@@ -164,6 +168,9 @@
             <div class="contact-grid">
                 {% if profile.phone %}
                     <p><strong>Phone</strong><br><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
+                {% endif %}
+                {% if profile.email %}
+                    <p><strong>Email</strong><br><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
                 {% endif %}
                 {% if profile.address %}
                     <p><strong>Address</strong><br>{{ profile.address }}</p>
