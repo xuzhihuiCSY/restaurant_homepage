@@ -13,6 +13,9 @@
         <a class="brand" href="#top">{{ profile.name }}</a>
         <nav class="site-nav" aria-label="Main navigation">
             <a href="#photos">Photos</a>
+            {% if profile.show_online_order and profile.online_order_url %}
+                <a href="#order-online">Order</a>
+            {% endif %}
             <a href="#recommendations">Today</a>
             <a href="#reviews">Reviews</a>
             <a href="#events">Events</a>
@@ -48,6 +51,19 @@
                 {% endif %}
             </div>
         </section>
+
+        {% if profile.show_online_order and profile.online_order_url %}
+            <section id="order-online" class="order-online-section">
+                <a
+                    class="order-online-button"
+                    href="{{ profile.online_order_url }}"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Order Online
+                </a>
+            </section>
+        {% endif %}
 
         <section id="photos" class="photo-section">
             <div class="section-heading">

@@ -36,6 +36,8 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
     * 在今日推荐菜和活动之间展示 owner 手动填写的评价内容，不提供公开用户提交评论功能。
 * **Restaurant Photo Display (餐厅照片展示):** Displays owner-managed restaurant photos between the hero section and today's recommendations.
     * 在首页首屏和今日推荐菜之间展示 owner 管理的餐厅照片。
+* **Optional Online Order Section (可选在线点餐区):** Displays a single "Order Online" button when the owner enables the section and provides an online order URL.
+    * 当 owner 开启该区块并提供在线点餐链接时，显示一个 “Order Online” 按钮。
 * **Upcoming Events List (近期活动列表):** A simple homepage list displaying community events, holiday specials, or live music scheduled at the venue.
     * 简洁列表展示餐厅计划举办的社区活动、节日特惠或现场音乐会。
 * **Contact & Location Section (联系方式与地址):** Displays phone number, email, address, opening hours, and an optional embedded map link. The owner can choose whether the hero contact button prioritizes phone or email.
@@ -70,6 +72,8 @@ Django 应用使用少量模型支持首页内容展示：
 * `address` (CharField): Restaurant address.
 * `opening_hours` (CharField): Business hours.
 * `map_url` (URLField): Optional map link.
+* `show_online_order` (BooleanField): Toggles whether the online order section is visible.
+* `online_order_url` (URLField): Required when `show_online_order` is True.
 * `hero_image` (ImageField): Homepage hero image.
 
 ### DailyRecommendation Model (今日推荐菜模型)

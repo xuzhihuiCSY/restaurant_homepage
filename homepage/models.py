@@ -26,6 +26,8 @@ class RestaurantProfile(models.Model):
     address = models.CharField(max_length=255, blank=True)
     opening_hours = models.CharField(max_length=180, blank=True)
     map_url = models.URLField(blank=True)
+    show_online_order = models.BooleanField(default=False)
+    online_order_url = models.URLField(blank=True)
     hero_image = models.ImageField(upload_to="restaurant/", blank=True)
     reviews_background_image = models.ImageField(upload_to="restaurant/", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,6 +38,12 @@ class RestaurantProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.show_online_order and not self.online_order_url:
+            raise ValidationError({
+                "online_order_url": "Online order URL is required when the section is visible."
+            })
 
 
 class DailyRecommendation(models.Model):

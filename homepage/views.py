@@ -32,6 +32,8 @@ def home(request):
         address="",
         opening_hours="",
         map_url="",
+        show_online_order=False,
+        online_order_url="",
         hero_image=None,
     )
 

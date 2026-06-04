@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -93,6 +94,24 @@ class HomePageTests(TestCase):
         self.assertContains(response, 'href="mailto:hello@example.com"')
         self.assertContains(response, "Email us")
         self.assertContains(response, "hello@example.com")
+
+    def test_online_order_section_renders_when_visible_with_url(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            show_online_order=True,
+            online_order_url="https://order.example.com/menu",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "Order Online")
+        self.assertContains(response, 'href="https://order.example.com/menu"')
+
+    def test_online_order_url_required_when_section_visible(self):
+        profile = RestaurantProfile(name="Test Restaurant", show_online_order=True)
+
+        with self.assertRaises(ValidationError):
+            profile.full_clean()
 
 
 class OwnerControlsTests(TestCase):
