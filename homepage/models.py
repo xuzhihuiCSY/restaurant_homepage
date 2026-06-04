@@ -26,6 +26,7 @@ class RestaurantProfile(models.Model):
     address = models.CharField(max_length=255, blank=True)
     opening_hours = models.CharField(max_length=180, blank=True)
     map_url = models.URLField(blank=True)
+    logo = models.ImageField(upload_to="restaurant/", blank=True)
     show_online_order = models.BooleanField(default=False)
     online_order_url = models.URLField(blank=True)
     online_order_image_left = models.ImageField(upload_to="restaurant/", blank=True)

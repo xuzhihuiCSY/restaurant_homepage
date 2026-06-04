@@ -10,7 +10,12 @@
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="#top">{{ profile.name }}</a>
+        <a class="brand" href="#top">
+            {% if profile.logo %}
+                <img src="{{ profile.logo.url }}" alt="{{ profile.name }} logo">
+            {% endif %}
+            <span>{{ profile.name }}</span>
+        </a>
         <nav class="site-nav" aria-label="Main navigation">
             <a href="#photos">Photos</a>
             {% if profile.show_online_order and profile.online_order_url %}
@@ -29,6 +34,9 @@
     <main id="top">
         <section class="hero">
             <div class="hero-copy">
+                {% if profile.logo %}
+                    <img class="hero-logo" src="{{ profile.logo.url }}" alt="{{ profile.name }} logo">
+                {% endif %}
                 <p class="eyebrow">{{ profile.tagline|default:"Local restaurant" }}</p>
                 <h1>{{ profile.name }}</h1>
                 <p>{{ profile.description|default:"Fresh food, warm service, and a simple place to gather." }}</p>

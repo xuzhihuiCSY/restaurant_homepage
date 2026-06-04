@@ -51,8 +51,22 @@ img {
 }
 
 .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 800;
     text-decoration: none;
+}
+
+.brand img {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    object-fit: contain;
+}
+
+.brand span {
+    line-height: 1.1;
 }
 
 .site-nav {
@@ -82,6 +96,14 @@ img {
 
 .hero-copy {
     max-width: 680px;
+}
+
+.hero-logo {
+    width: clamp(72px, 12vw, 120px);
+    height: clamp(72px, 12vw, 120px);
+    margin-bottom: 20px;
+    border-radius: 8px;
+    object-fit: contain;
 }
 
 .eyebrow,

@@ -22,6 +22,7 @@ class RestaurantProfileForm(forms.ModelForm):
             "address",
             "opening_hours",
             "map_url",
+            "logo",
             "show_online_order",
             "online_order_url",
             "online_order_image_left",

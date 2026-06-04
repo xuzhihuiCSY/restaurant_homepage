@@ -64,6 +64,7 @@ Django 应用使用少量模型支持首页内容展示：
 
 ### RestaurantProfile Model (餐厅信息模型)
 * `name` (CharField): Restaurant name.
+* `logo` (ImageField): Optional restaurant logo for the header and hero area.
 * `tagline` (CharField): Short homepage slogan.
 * `description` (TextField): Introductory copy.
 * `phone` (CharField): Contact phone number.

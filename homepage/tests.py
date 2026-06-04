@@ -95,6 +95,17 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Email us")
         self.assertContains(response, "hello@example.com")
 
+    def test_restaurant_logo_renders_on_homepage(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            logo="restaurant/logo.png",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "restaurant/logo.png")
+        self.assertContains(response, "Test Restaurant logo")
+
     def test_online_order_section_renders_when_visible_with_url(self):
         RestaurantProfile.objects.create(
             name="Test Restaurant",
@@ -139,6 +150,7 @@ class OwnerControlsTests(TestCase):
         self.assertContains(response, "Homepage display controls")
         self.assertContains(response, "Restaurant photo display")
         self.assertContains(response, "Review highlights")
+        self.assertContains(response, "Logo")
         self.assertContains(response, "Online order")
         self.assertContains(response, "Reviews background image")
         self.assertLess(content.index("Homepage details"), content.index("Online order"))
