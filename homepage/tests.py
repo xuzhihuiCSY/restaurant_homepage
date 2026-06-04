@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import CustomerReview, DailyRecommendation, Event
+from .models import CustomerReview, DailyRecommendation, Event, RestaurantProfile
 
 
 class HomePageTests(TestCase):
@@ -55,6 +55,17 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Great karaoke night and friendly staff.")
         self.assertLess(content.index("Chef recommended dishes"), content.index("What guests say"))
         self.assertLess(content.index("What guests say"), content.index("Upcoming dates"))
+
+    def test_reviews_section_uses_uploaded_background_image(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            reviews_background_image="restaurant/reviews.jpg",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "has-review-background")
+        self.assertContains(response, "restaurant/reviews.jpg")
 
 
 class OwnerControlsTests(TestCase):

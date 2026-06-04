@@ -86,7 +86,13 @@
             {% endif %}
         </section>
 
-        <section id="reviews" class="section reviews-section">
+        <section
+            id="reviews"
+            class="section reviews-section {% if profile.reviews_background_image %}has-review-background{% endif %}"
+            {% if profile.reviews_background_image %}
+                style="--reviews-bg: url('{{ profile.reviews_background_image.url }}');"
+            {% endif %}
+        >
             <div class="section-heading">
                 <div>
                     <p class="eyebrow">Reviews</p>

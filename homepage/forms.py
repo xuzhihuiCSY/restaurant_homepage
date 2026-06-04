@@ -21,6 +21,7 @@ class RestaurantProfileForm(forms.ModelForm):
             "opening_hours",
             "map_url",
             "hero_image",
+            "reviews_background_image",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),

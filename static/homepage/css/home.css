@@ -201,7 +201,24 @@ h3 {
 }
 
 .reviews-section {
+    position: relative;
     background: #ffffff;
+    overflow: hidden;
+}
+
+.reviews-section.has-review-background {
+    background:
+        linear-gradient(rgba(32, 33, 36, 0.68), rgba(32, 33, 36, 0.72)),
+        var(--reviews-bg) center/cover;
+    color: #fff;
+}
+
+.reviews-section.has-review-background .eyebrow {
+    color: #ffcf7a;
+}
+
+.reviews-section.has-review-background .empty-state {
+    color: rgba(255, 255, 255, 0.78);
 }
 
 .photo-grid {
@@ -344,6 +361,11 @@ h3 {
     padding: 22px;
     background: var(--panel);
     box-shadow: var(--shadow);
+}
+
+.has-review-background .review-card {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .stars {

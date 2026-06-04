@@ -14,6 +14,7 @@ class RestaurantProfile(models.Model):
     opening_hours = models.CharField(max_length=180, blank=True)
     map_url = models.URLField(blank=True)
     hero_image = models.ImageField(upload_to="restaurant/", blank=True)
+    reviews_background_image = models.ImageField(upload_to="restaurant/", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
