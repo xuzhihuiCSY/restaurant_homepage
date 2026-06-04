@@ -133,11 +133,18 @@ class OwnerControlsTests(TestCase):
         self.client.force_login(user)
 
         response = self.client.get(reverse("homepage:owner_dashboard"))
+        content = response.content.decode()
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Homepage display controls")
         self.assertContains(response, "Restaurant photo display")
         self.assertContains(response, "Review highlights")
+        self.assertContains(response, "Online order")
+        self.assertContains(response, "Reviews background image")
+        self.assertLess(content.index("Homepage details"), content.index("Online order"))
+        self.assertLess(content.index("Online order"), content.index("Review highlights"))
+        self.assertLess(content.index("Review highlights"), content.index("Reviews background image"))
+        self.assertLess(content.index("Reviews background image"), content.index("Restaurant photo display"))
 
     def test_staff_can_create_today_recommendation(self):
         user = self._create_staff_user()
