@@ -28,6 +28,8 @@ class RestaurantProfile(models.Model):
     map_url = models.URLField(blank=True)
     show_online_order = models.BooleanField(default=False)
     online_order_url = models.URLField(blank=True)
+    online_order_image_left = models.ImageField(upload_to="restaurant/", blank=True)
+    online_order_image_right = models.ImageField(upload_to="restaurant/", blank=True)
     hero_image = models.ImageField(upload_to="restaurant/", blank=True)
     reviews_background_image = models.ImageField(upload_to="restaurant/", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -40,10 +42,15 @@ class RestaurantProfile(models.Model):
         return self.name
 
     def clean(self):
+        errors = {}
         if self.show_online_order and not self.online_order_url:
-            raise ValidationError({
-                "online_order_url": "Online order URL is required when the section is visible."
-            })
+            errors["online_order_url"] = "Online order URL is required when the section is visible."
+        if self.show_online_order and not self.online_order_image_left:
+            errors["online_order_image_left"] = "Left online order image is required when the section is visible."
+        if self.show_online_order and not self.online_order_image_right:
+            errors["online_order_image_right"] = "Right online order image is required when the section is visible."
+        if errors:
+            raise ValidationError(errors)
 
 
 class DailyRecommendation(models.Model):

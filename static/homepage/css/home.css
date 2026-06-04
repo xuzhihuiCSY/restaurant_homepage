@@ -190,9 +190,34 @@ h3 {
 
 .order-online-section {
     display: grid;
-    place-items: center;
+    grid-template-columns: minmax(180px, 0.8fr) minmax(260px, 0.7fr) minmax(180px, 0.8fr);
+    align-items: center;
+    gap: clamp(18px, 4vw, 40px);
     padding: clamp(32px, 5vw, 56px) clamp(20px, 5vw, 72px);
     background: var(--ink);
+}
+
+.order-online-copy {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    color: #fff;
+}
+
+.order-online-copy .eyebrow {
+    color: #ffcf7a;
+}
+
+.order-online-copy h2 {
+    margin-bottom: 20px;
+}
+
+.order-online-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: var(--shadow);
 }
 
 .order-online-button {
@@ -480,6 +505,7 @@ h3 {
 
 @media (max-width: 900px) {
     .hero,
+    .order-online-section,
     .contact-section {
         grid-template-columns: 1fr;
     }

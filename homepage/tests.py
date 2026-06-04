@@ -100,12 +100,19 @@ class HomePageTests(TestCase):
             name="Test Restaurant",
             show_online_order=True,
             online_order_url="https://order.example.com/menu",
+            online_order_image_left="restaurant/order-left.jpg",
+            online_order_image_right="restaurant/order-right.jpg",
         )
 
         response = self.client.get(reverse("homepage:home"))
+        content = response.content.decode()
 
         self.assertContains(response, "Order Online")
         self.assertContains(response, 'href="https://order.example.com/menu"')
+        self.assertContains(response, "restaurant/order-left.jpg")
+        self.assertContains(response, "restaurant/order-right.jpg")
+        self.assertLess(content.index("What guests say"), content.index('id="order-online"'))
+        self.assertLess(content.index('id="order-online"'), content.index("Upcoming dates"))
 
     def test_online_order_url_required_when_section_visible(self):
         profile = RestaurantProfile(name="Test Restaurant", show_online_order=True)

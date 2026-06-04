@@ -33,6 +33,16 @@
                 <h1>{{ profile.name }}</h1>
                 <p>{{ profile.description|default:"Fresh food, warm service, and a simple place to gather." }}</p>
                 <div class="hero-actions">
+                    {% if profile.show_online_order and profile.online_order_url %}
+                        <a
+                            class="button primary"
+                            href="{{ profile.online_order_url }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            Order Online
+                        </a>
+                    {% endif %}
                     <a class="button primary" href="#recommendations">Today's dishes</a>
                     {% if profile.primary_contact_method == "email" and profile.email %}
                         <a class="button secondary" href="mailto:{{ profile.email }}">Email us</a>
@@ -51,19 +61,6 @@
                 {% endif %}
             </div>
         </section>
-
-        {% if profile.show_online_order and profile.online_order_url %}
-            <section id="order-online" class="order-online-section">
-                <a
-                    class="order-online-button"
-                    href="{{ profile.online_order_url }}"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Order Online
-                </a>
-            </section>
-        {% endif %}
 
         <section id="photos" class="photo-section">
             <div class="section-heading">
@@ -141,6 +138,37 @@
                 <p class="empty-state">Review highlights will appear here.</p>
             {% endif %}
         </section>
+
+        {% if profile.show_online_order and profile.online_order_url %}
+            <section id="order-online" class="order-online-section">
+                {% if profile.online_order_image_left %}
+                    <img
+                        class="order-online-image"
+                        src="{{ profile.online_order_image_left.url }}"
+                        alt="{{ profile.name }} online order feature"
+                    >
+                {% endif %}
+                <div class="order-online-copy">
+                    <p class="eyebrow">Order</p>
+                    <h2>Order online</h2>
+                    <a
+                        class="order-online-button"
+                        href="{{ profile.online_order_url }}"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        Order Online
+                    </a>
+                </div>
+                {% if profile.online_order_image_right %}
+                    <img
+                        class="order-online-image"
+                        src="{{ profile.online_order_image_right.url }}"
+                        alt="{{ profile.name }} online order feature"
+                    >
+                {% endif %}
+            </section>
+        {% endif %}
 
         <section id="events" class="section">
             <div class="section-heading">

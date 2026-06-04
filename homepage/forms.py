@@ -24,6 +24,8 @@ class RestaurantProfileForm(forms.ModelForm):
             "map_url",
             "show_online_order",
             "online_order_url",
+            "online_order_image_left",
+            "online_order_image_right",
             "hero_image",
             "reviews_background_image",
         ]

@@ -34,6 +34,8 @@ def home(request):
         map_url="",
         show_online_order=False,
         online_order_url="",
+        online_order_image_left=None,
+        online_order_image_right=None,
         hero_image=None,
     )
 
