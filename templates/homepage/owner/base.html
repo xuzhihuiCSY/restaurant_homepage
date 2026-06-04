@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title|default:"Owner controls" }}</title>
+    <link rel="stylesheet" href="{% static 'homepage/css/owner.css' %}">
+</head>
+<body>
+    <header class="owner-header">
+        <a class="owner-brand" href="{% url 'homepage:owner_dashboard' %}">Owner controls</a>
+        <nav aria-label="Owner navigation">
+            <a href="{% url 'homepage:home' %}">View site</a>
+            <a href="{% url 'admin:index' %}">Django Admin</a>
+        </nav>
+    </header>
+
+    <main class="owner-shell">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

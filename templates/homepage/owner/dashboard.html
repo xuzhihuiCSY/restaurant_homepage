@@ -1,0 +1,162 @@
+{% extends "homepage/owner/base.html" %}
+
+{% block content %}
+    <section class="owner-hero">
+        <div>
+            <p class="eyebrow">Dashboard</p>
+            <h1>Homepage display controls</h1>
+            <p>Update what customers see on the restaurant homepage.</p>
+        </div>
+        <div class="quick-actions">
+            <a class="button primary" href="{% url 'homepage:recommendation_create' %}">Add recommendation</a>
+            <a class="button secondary" href="{% url 'homepage:event_create' %}">Add event</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">Restaurant</p>
+                <h2>Homepage details</h2>
+            </div>
+        </div>
+        <form class="owner-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ profile_form.non_field_errors }}
+            <div class="form-grid">
+                {% for field in profile_form %}
+                    <label class="{% if field.name == 'description' %}wide{% endif %}">
+                        <span>{{ field.label }}</span>
+                        {{ field }}
+                        {{ field.errors }}
+                    </label>
+                {% endfor %}
+            </div>
+            <button class="button primary" type="submit">Save homepage details</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">{{ today }}</p>
+                <h2>Today and scheduled recommended dishes</h2>
+            </div>
+            <a class="button secondary" href="{% url 'homepage:recommendation_create' %}">Add dish</a>
+        </div>
+        {% if recommendations %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dish</th>
+                            <th>Date</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Sale</th>
+                            <th>Order</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in recommendations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.name }}</strong>
+                                    {% if item.description %}
+                                        <small>{{ item.description|truncatechars:90 }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.display_date }}</td>
+                                <td>
+                                    {% if item.is_on_sale and item.sale_price %}
+                                        <span class="old-price">${{ item.price }}</span>
+                                        <strong>${{ item.sale_price }}</strong>
+                                    {% else %}
+                                        <strong>${{ item.price }}</strong>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.is_available %}
+                                        <span class="pill live">Visible</span>
+                                    {% else %}
+                                        <span class="pill muted">Hidden</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.is_on_sale %}
+                                        <span class="pill sale">On sale</span>
+                                    {% else %}
+                                        <span class="pill muted">Regular</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.order }}</td>
+                                <td class="row-actions">
+                                    <a href="{% url 'homepage:recommendation_edit' item.pk %}">Edit</a>
+                                    <a class="danger" href="{% url 'homepage:recommendation_delete' item.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No dishes are configured for today yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">Events</p>
+                <h2>Upcoming activities</h2>
+            </div>
+            <a class="button secondary" href="{% url 'homepage:event_create' %}">Add event</a>
+        </div>
+        {% if upcoming_events %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in upcoming_events %}
+                            <tr>
+                                <td>
+                                    <strong>{{ event.title }}</strong>
+                                    {% if event.description %}
+                                        <small>{{ event.description|truncatechars:90 }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ event.event_date }}
+                                    {% if event.start_time %}
+                                        <small>{{ event.start_time|time:"g:i A" }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if event.is_published %}
+                                        <span class="pill live">Visible</span>
+                                    {% else %}
+                                        <span class="pill muted">Hidden</span>
+                                    {% endif %}
+                                </td>
+                                <td class="row-actions">
+                                    <a href="{% url 'homepage:event_edit' event.pk %}">Edit</a>
+                                    <a class="danger" href="{% url 'homepage:event_delete' event.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No upcoming events are configured yet.</p>
+        {% endif %}
+    </section>
+{% endblock %}

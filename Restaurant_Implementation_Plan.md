@@ -42,10 +42,12 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
 ### 2.2 Owner Administration Panel (Read/Write) / 商家管理后台（读写）
 * **Secure Authentication (安全身份验证):** Access limited strictly to users with `is_staff` or `is_superuser` flags using Django's native session-based authentication. General site visitors cannot view or access this path.
     * 利用 Django 原生的 Session 身份验证，访问权限严格限制为具有 `is_staff` 或 `is_superuser` 标签的用户。普通访客无法查看或访问此路径。
-* **Content Management Dashboard (内容管理仪表盘):** Django Admin forms for the owner to update restaurant information, maintain today's recommended dishes, and schedule new events without writing code.
-    * 通过 Django Admin 表单，供所有者在不编写代码的情况下更新餐厅信息、维护今日推荐菜以及安排新活动。
+* **Owner Control Dashboard (Owner 控制界面):** A protected `/owner/` dashboard for updating restaurant information, maintaining today's recommended dishes, setting discounts, and scheduling events without writing code.
+    * 提供受保护的 `/owner/` 控制界面，供所有者在不编写代码的情况下更新餐厅信息、维护今日推荐菜、设置折扣以及安排活动。
 * **Availability & Promotion Toggles (供应状态与促销开关):** Quick checkboxes to hide unavailable recommendations or mark a recommendation as on sale with a discount price.
     * 快捷复选框，可隐藏不可供应的推荐菜，或为推荐菜设置折扣价。
+* **Django Admin Fallback (Django Admin 备用后台):** Django Admin remains available for advanced staff-level data management.
+    * Django Admin 仍可作为高级数据管理备用入口。
 
 ---
 
@@ -90,8 +92,8 @@ Django 应用使用少量模型支持首页内容展示：
     * Initialize the Django project and homepage app. Create database models for restaurant profile information, daily recommendations, and events.
     * 初始化 Django 项目和首页应用。创建餐厅基础信息、今日推荐菜和活动模型。
 * **Phase 2: Admin & Content Management / 第二阶段：后台管理与内容维护**
-    * Configure Django Admin with streamlined forms, image upload support, display ordering, and promotion toggles for daily recommendations.
-    * 配置 Django Admin，支持今日推荐菜的简化表单、图片上传、展示排序和促销开关。
+    * Build an owner-friendly dashboard and keep Django Admin available for advanced management.
+    * 开发面向 owner 的控制界面，并保留 Django Admin 作为高级管理入口。
 * **Phase 3: HTML Template Homepage / 第三阶段：首页 HTML 模板开发**
     * Build the homepage with Django templates, static CSS, and minimal JavaScript for navigation, responsive behavior, and simple interactions.
     * 使用 Django 模板、静态 CSS 和少量 JavaScript 开发首页，实现导航、响应式布局和基础交互。
