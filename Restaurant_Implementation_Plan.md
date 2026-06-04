@@ -1,8 +1,8 @@
 # Restaurant Website Implementation Plan / 餐厅网站开发实施方案
 
-This document outlines the technical implementation plan for a responsive restaurant homepage built with Django-rendered HTML templates. The page highlights restaurant information, today's recommended dishes, upcoming events, and basic contact/location details.
+This document outlines the technical implementation plan for a responsive restaurant homepage built with Django-rendered HTML templates. The page highlights restaurant information, restaurant photos, today's recommended dishes, upcoming events, and basic contact/location details.
 
-本文件概述 food/餐饮 网站首页的开发实施方案。项目采用 Django + HTML 模板实现，不做前后端分离。首页只展示餐厅介绍、今日推荐菜、近期活动、联系方式与地址信息，不承载完整菜单。
+本文件概述 food/餐饮 网站首页的开发实施方案。项目采用 Django + HTML 模板实现，不做前后端分离。首页只展示餐厅介绍、餐厅照片、今日推荐菜、近期活动、联系方式与地址信息，不承载完整菜单。
 
 ---
 
@@ -32,6 +32,8 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
     * 展示餐厅名称、核心卖点、营业状态，以及查看今日推荐菜或拨打电话等主要操作入口。
 * **Today's Recommended Dishes (今日推荐菜):** Displays a small curated list of dishes for the current day. This is not a full menu.
     * 展示当天精选的少量推荐菜品，不展示完整菜单。
+* **Restaurant Photo Display (餐厅照片展示):** Displays owner-managed restaurant photos between the hero section and today's recommendations.
+    * 在首页首屏和今日推荐菜之间展示 owner 管理的餐厅照片。
 * **Upcoming Events List (近期活动列表):** A simple homepage list displaying community events, holiday specials, or live music scheduled at the venue.
     * 简洁列表展示餐厅计划举办的社区活动、节日特惠或现场音乐会。
 * **Contact & Location Section (联系方式与地址):** Displays phone number, address, opening hours, and an optional embedded map link.
@@ -42,8 +44,8 @@ A simple Django monolithic architecture is sufficient for a restaurant homepage.
 ### 2.2 Owner Administration Panel (Read/Write) / 商家管理后台（读写）
 * **Secure Authentication (安全身份验证):** Access limited strictly to users with `is_staff` or `is_superuser` flags using Django's native session-based authentication. General site visitors cannot view or access this path.
     * 利用 Django 原生的 Session 身份验证，访问权限严格限制为具有 `is_staff` 或 `is_superuser` 标签的用户。普通访客无法查看或访问此路径。
-* **Owner Control Dashboard (Owner 控制界面):** A protected `/owner/` dashboard for updating restaurant information, maintaining today's recommended dishes, setting discounts, and scheduling events without writing code.
-    * 提供受保护的 `/owner/` 控制界面，供所有者在不编写代码的情况下更新餐厅信息、维护今日推荐菜、设置折扣以及安排活动。
+* **Owner Control Dashboard (Owner 控制界面):** A protected `/owner/` dashboard for updating restaurant information, managing restaurant photos, maintaining today's recommended dishes, setting discounts, and scheduling events without writing code.
+    * 提供受保护的 `/owner/` 控制界面，供所有者在不编写代码的情况下更新餐厅信息、管理餐厅照片、维护今日推荐菜、设置折扣以及安排活动。
 * **Availability & Promotion Toggles (供应状态与促销开关):** Quick checkboxes to hide unavailable recommendations or mark a recommendation as on sale with a discount price.
     * 快捷复选框，可隐藏不可供应的推荐菜，或为推荐菜设置折扣价。
 * **Django Admin Fallback (Django Admin 备用后台):** Django Admin remains available for advanced staff-level data management.
@@ -77,6 +79,12 @@ Django 应用使用少量模型支持首页内容展示：
 * `image` (ImageField): Photo of the dish.
 * `order` (IntegerField): Display order for today's recommendations.
 
+### RestaurantPhoto Model (餐厅照片模型)
+* `title` (CharField): Optional photo caption.
+* `image` (ImageField): Restaurant photo.
+* `is_visible` (BooleanField): Toggles whether the photo appears on the homepage.
+* `order` (IntegerField): Display order for the photo section.
+
 ### Event Model (活动模型)
 * `title` (CharField): Event headline (e.g., "Live Jazz Night").
 * `description` (TextField): Event breakdown and reservation rules.
@@ -89,8 +97,8 @@ Django 应用使用少量模型支持首页内容展示：
 ## 4. Development Roadmap / 开发时间线与路线图
 
 * **Phase 1: Django Setup & Models / 第一阶段：Django 项目搭建与模型设计**
-    * Initialize the Django project and homepage app. Create database models for restaurant profile information, daily recommendations, and events.
-    * 初始化 Django 项目和首页应用。创建餐厅基础信息、今日推荐菜和活动模型。
+    * Initialize the Django project and homepage app. Create database models for restaurant profile information, restaurant photos, daily recommendations, and events.
+    * 初始化 Django 项目和首页应用。创建餐厅基础信息、餐厅照片、今日推荐菜和活动模型。
 * **Phase 2: Admin & Content Management / 第二阶段：后台管理与内容维护**
     * Build an owner-friendly dashboard and keep Django Admin available for advanced management.
     * 开发面向 owner 的控制界面，并保留 Django Admin 作为高级管理入口。

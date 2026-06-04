@@ -51,6 +51,19 @@ class DailyRecommendation(models.Model):
         return self.name
 
 
+class RestaurantPhoto(models.Model):
+    title = models.CharField(max_length=120, blank=True)
+    image = models.ImageField(upload_to="restaurant_photos/")
+    is_visible = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.title or f"Restaurant photo {self.pk}"
+
+
 class Event(models.Model):
     title = models.CharField(max_length=140)
     description = models.TextField(blank=True)

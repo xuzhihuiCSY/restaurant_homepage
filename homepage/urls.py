@@ -7,6 +7,13 @@ app_name = "homepage"
 urlpatterns = [
     path("", views.home, name="home"),
     path("owner/", views.owner_dashboard, name="owner_dashboard"),
+    path("owner/photos/new/", views.restaurant_photo_create, name="photo_create"),
+    path("owner/photos/<int:pk>/edit/", views.restaurant_photo_edit, name="photo_edit"),
+    path(
+        "owner/photos/<int:pk>/delete/",
+        views.restaurant_photo_delete,
+        name="photo_delete",
+    ),
     path(
         "owner/recommendations/new/",
         views.recommendation_create,

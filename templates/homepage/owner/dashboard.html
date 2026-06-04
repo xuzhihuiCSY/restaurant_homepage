@@ -8,9 +8,57 @@
             <p>Update what customers see on the restaurant homepage.</p>
         </div>
         <div class="quick-actions">
+            <a class="button secondary" href="{% url 'homepage:photo_create' %}">Add photo</a>
             <a class="button primary" href="{% url 'homepage:recommendation_create' %}">Add recommendation</a>
             <a class="button secondary" href="{% url 'homepage:event_create' %}">Add event</a>
         </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">Photos</p>
+                <h2>Restaurant photo display</h2>
+            </div>
+            <a class="button secondary" href="{% url 'homepage:photo_create' %}">Add photo</a>
+        </div>
+        {% if restaurant_photos %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Status</th>
+                            <th>Order</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for photo in restaurant_photos %}
+                            <tr>
+                                <td>
+                                    <strong>{{ photo.title|default:"Restaurant photo" }}</strong>
+                                </td>
+                                <td>
+                                    {% if photo.is_visible %}
+                                        <span class="pill live">Visible</span>
+                                    {% else %}
+                                        <span class="pill muted">Hidden</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ photo.order }}</td>
+                                <td class="row-actions">
+                                    <a href="{% url 'homepage:photo_edit' photo.pk %}">Edit</a>
+                                    <a class="danger" href="{% url 'homepage:photo_delete' photo.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No restaurant photos are configured yet.</p>
+        {% endif %}
     </section>
 
     <section class="panel">

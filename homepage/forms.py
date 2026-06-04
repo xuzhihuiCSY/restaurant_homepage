@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import DailyRecommendation, Event, RestaurantProfile
+from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
 
 
 class RestaurantProfileForm(forms.ModelForm):
@@ -57,3 +57,14 @@ class EventForm(forms.ModelForm):
             "event_date": forms.DateInput(attrs={"type": "date"}),
             "start_time": forms.TimeInput(attrs={"type": "time"}),
         }
+
+
+class RestaurantPhotoForm(forms.ModelForm):
+    class Meta:
+        model = RestaurantPhoto
+        fields = [
+            "title",
+            "image",
+            "is_visible",
+            "order",
+        ]

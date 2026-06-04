@@ -5,8 +5,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import DailyRecommendationForm, EventForm, RestaurantProfileForm
-from .models import DailyRecommendation, Event, RestaurantProfile
+from .forms import (
+    DailyRecommendationForm,
+    EventForm,
+    RestaurantPhotoForm,
+    RestaurantProfileForm,
+)
+from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
 
 
 def home(request):
@@ -30,12 +35,14 @@ def home(request):
         is_published=True,
         event_date__gte=today,
     )[:3]
+    restaurant_photos = RestaurantPhoto.objects.filter(is_visible=True)[:6]
 
     return render(
         request,
         "homepage/home.html",
         {
             "profile": profile,
+            "restaurant_photos": restaurant_photos,
             "recommendations": recommendations,
             "upcoming_events": upcoming_events,
         },
@@ -58,6 +65,7 @@ def owner_dashboard(request):
         profile_form = RestaurantProfileForm(instance=profile)
 
     today = timezone.localdate()
+    restaurant_photos = RestaurantPhoto.objects.all()[:12]
     recommendations = DailyRecommendation.objects.filter(display_date__gte=today)[:12]
     upcoming_events = Event.objects.filter(event_date__gte=today)[:8]
 
@@ -66,6 +74,7 @@ def owner_dashboard(request):
         "homepage/owner/dashboard.html",
         {
             "profile_form": profile_form,
+            "restaurant_photos": restaurant_photos,
             "recommendations": recommendations,
             "upcoming_events": upcoming_events,
             "today": today,
@@ -80,6 +89,39 @@ def recommendation_create(request):
         DailyRecommendationForm,
         "homepage/owner/form.html",
         "Add today's recommended dish",
+    )
+
+
+@staff_member_required
+def restaurant_photo_create(request):
+    return _save_model_form(
+        request,
+        RestaurantPhotoForm,
+        "homepage/owner/form.html",
+        "Add restaurant photo",
+    )
+
+
+@staff_member_required
+def restaurant_photo_edit(request, pk):
+    photo = get_object_or_404(RestaurantPhoto, pk=pk)
+    return _save_model_form(
+        request,
+        RestaurantPhotoForm,
+        "homepage/owner/form.html",
+        "Edit restaurant photo",
+        instance=photo,
+    )
+
+
+@staff_member_required
+def restaurant_photo_delete(request, pk):
+    photo = get_object_or_404(RestaurantPhoto, pk=pk)
+    return _confirm_delete(
+        request,
+        photo,
+        "Delete restaurant photo",
+        f"Delete {photo} from the homepage photo display?",
     )
 
 

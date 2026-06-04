@@ -12,6 +12,7 @@
     <header class="site-header">
         <a class="brand" href="#top">{{ profile.name }}</a>
         <nav class="site-nav" aria-label="Main navigation">
+            <a href="#photos">Photos</a>
             <a href="#recommendations">Today</a>
             <a href="#events">Events</a>
             <a href="#contact">Contact</a>
@@ -41,6 +42,31 @@
                     <div class="hero-placeholder">Restaurant Homepage</div>
                 {% endif %}
             </div>
+        </section>
+
+        <section id="photos" class="photo-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Inside</p>
+                    <h2>Restaurant photos</h2>
+                </div>
+            </div>
+            {% if restaurant_photos %}
+                <div class="photo-grid">
+                    {% for photo in restaurant_photos %}
+                        <figure class="photo-tile {% if forloop.first %}featured-photo{% endif %}">
+                            <img src="{{ photo.image.url }}" alt="{{ photo.title|default:profile.name }}">
+                            {% if photo.title %}
+                                <figcaption>{{ photo.title }}</figcaption>
+                            {% endif %}
+                        </figure>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="photo-placeholder">
+                    <p>Restaurant photos will appear here.</p>
+                </div>
+            {% endif %}
         </section>
 
         <section id="recommendations" class="section">

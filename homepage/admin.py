@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DailyRecommendation, Event, RestaurantProfile
+from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
 
 
 @admin.register(RestaurantProfile)
@@ -44,3 +44,11 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ("is_published", "event_date")
     search_fields = ("title", "description")
     ordering = ("event_date", "start_time")
+
+
+@admin.register(RestaurantPhoto)
+class RestaurantPhotoAdmin(admin.ModelAdmin):
+    list_display = ("title", "is_visible", "order")
+    list_editable = ("is_visible", "order")
+    search_fields = ("title",)
+    ordering = ("order", "id")

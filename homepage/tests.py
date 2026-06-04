@@ -12,6 +12,7 @@ class HomePageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Restaurant Name")
+        self.assertContains(response, "Restaurant photos")
         self.assertContains(response, "Chef recommended dishes")
 
     def test_today_recommendation_renders_on_homepage(self):
@@ -41,6 +42,7 @@ class OwnerControlsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Homepage display controls")
+        self.assertContains(response, "Restaurant photo display")
 
     def test_staff_can_create_today_recommendation(self):
         user = self._create_staff_user()
