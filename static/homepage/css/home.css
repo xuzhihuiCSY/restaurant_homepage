@@ -259,6 +259,38 @@ h3 {
     gap: 18px;
 }
 
+.recommendation-strip {
+    display: grid;
+    grid-auto-columns: minmax(260px, 340px);
+    grid-auto-flow: column;
+    gap: 18px;
+    margin-inline: calc(clamp(20px, 5vw, 72px) * -1);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0 clamp(20px, 5vw, 72px) 14px;
+    scroll-padding-inline: clamp(20px, 5vw, 72px);
+    scroll-snap-type: x proximity;
+}
+
+.recommendation-strip .menu-card {
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+.recommendation-strip::-webkit-scrollbar {
+    height: 10px;
+}
+
+.recommendation-strip::-webkit-scrollbar-track {
+    background: #eee7dc;
+    border-radius: 999px;
+}
+
+.recommendation-strip::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 999px;
+}
+
 .item-grid.compact {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -398,7 +430,6 @@ h3 {
     }
 
     .photo-grid,
-    .item-grid,
     .item-grid.compact,
     .event-list,
     .review-grid {
@@ -433,7 +464,6 @@ h3 {
     }
 
     .photo-grid,
-    .item-grid,
     .item-grid.compact,
     .event-list,
     .review-grid,

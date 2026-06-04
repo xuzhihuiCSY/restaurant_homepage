@@ -76,7 +76,7 @@
                 <h2>Chef recommended dishes</h2>
             </div>
             {% if recommendations %}
-                <div class="item-grid">
+                <div class="recommendation-strip" aria-label="Chef recommended dishes">
                     {% for item in recommendations %}
                         {% include "homepage/partials/menu_card.html" with item=item %}
                     {% endfor %}
