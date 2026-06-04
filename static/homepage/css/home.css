@@ -393,10 +393,25 @@ h3 {
 }
 
 .event-card {
+    position: relative;
     display: grid;
     grid-template-columns: 78px minmax(0, 1fr);
     gap: 18px;
     padding: 20px;
+    overflow: hidden;
+}
+
+.event-card.has-event-image {
+    min-height: 260px;
+    align-items: end;
+    background:
+        linear-gradient(rgba(32, 33, 36, 0.18), rgba(32, 33, 36, 0.76)),
+        var(--event-bg) center/cover;
+    color: #fff;
+}
+
+.event-card.has-event-image p {
+    color: rgba(255, 255, 255, 0.82);
 }
 
 .event-card time {
@@ -408,6 +423,10 @@ h3 {
     background: var(--leaf);
     color: #fff;
     font-weight: 800;
+}
+
+.event-card.has-event-image time {
+    background: rgba(32, 33, 36, 0.72);
 }
 
 .contact-section {

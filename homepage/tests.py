@@ -41,6 +41,19 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Jan 5")
         self.assertNotContains(response, "1月")
 
+    def test_event_cover_image_renders_as_card_background(self):
+        Event.objects.create(
+            title="Live Band",
+            event_date=date(2099, 2, 6),
+            cover_image="events/live-band.jpg",
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "has-event-image")
+        self.assertContains(response, "events/live-band.jpg")
+
     def test_visible_customer_review_renders_between_recommendations_and_events(self):
         CustomerReview.objects.create(
             customer_name="Alex",

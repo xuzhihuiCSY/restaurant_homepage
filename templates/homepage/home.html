@@ -130,7 +130,12 @@
             {% if upcoming_events %}
                 <div class="event-list">
                     {% for event in upcoming_events %}
-                        <article class="event-card">
+                        <article
+                            class="event-card {% if event.cover_image %}has-event-image{% endif %}"
+                            {% if event.cover_image %}
+                                style="--event-bg: url('{{ event.cover_image.url }}');"
+                            {% endif %}
+                        >
                             <time datetime="{{ event.event_date|date:'Y-m-d' }}">
                                 {{ event.display_date_en }}
                             </time>
