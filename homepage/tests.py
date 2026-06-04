@@ -1,9 +1,11 @@
+from datetime import date
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import DailyRecommendation
+from .models import DailyRecommendation, Event
 
 
 class HomePageTests(TestCase):
@@ -25,6 +27,18 @@ class HomePageTests(TestCase):
         response = self.client.get(reverse("homepage:home"))
 
         self.assertContains(response, "Lunch Special")
+
+    def test_event_date_renders_in_english(self):
+        Event.objects.create(
+            title="Karaoke Night",
+            event_date=date(2099, 1, 5),
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "Jan 5")
+        self.assertNotContains(response, "1月")
 
 
 class OwnerControlsTests(TestCase):

@@ -1,3 +1,5 @@
+import calendar
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -77,3 +79,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def display_date_en(self):
+        return f"{calendar.month_abbr[self.event_date.month]} {self.event_date.day}"
