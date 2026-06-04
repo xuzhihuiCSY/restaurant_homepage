@@ -1,12 +1,17 @@
+import os
+import shutil
+import tempfile
 from datetime import date
 
-from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import CustomerReview, DailyRecommendation, Event, RestaurantProfile
+from .models import CustomerReview, DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
 
 
 class HomePageTests(TestCase):
@@ -183,3 +188,67 @@ class OwnerControlsTests(TestCase):
             password="password",
             is_staff=True,
         )
+
+
+class MediaCleanupTests(TestCase):
+    def setUp(self):
+        self.media_root = tempfile.mkdtemp()
+        self.settings_override = override_settings(MEDIA_ROOT=self.media_root)
+        self.settings_override.enable()
+
+    def tearDown(self):
+        self.settings_override.disable()
+        shutil.rmtree(self.media_root, ignore_errors=True)
+
+    def test_deleting_image_model_removes_uploaded_file(self):
+        item = DailyRecommendation.objects.create(
+            name="Cleanup Dish",
+            price="12.00",
+            image=SimpleUploadedFile("cleanup.jpg", b"image-data", content_type="image/jpeg"),
+        )
+        image_path = item.image.path
+
+        self.assertTrue(os.path.exists(image_path))
+
+        item.delete()
+
+        self.assertFalse(os.path.exists(image_path))
+
+    def test_replacing_image_removes_old_uploaded_file(self):
+        photo = RestaurantPhoto.objects.create(
+            title="Dining room",
+            image=SimpleUploadedFile("old-room.jpg", b"old-image", content_type="image/jpeg"),
+        )
+        old_image_path = photo.image.path
+
+        photo.image = SimpleUploadedFile("new-room.jpg", b"new-image", content_type="image/jpeg")
+        photo.save()
+
+        self.assertFalse(os.path.exists(old_image_path))
+        self.assertTrue(os.path.exists(photo.image.path))
+
+    def test_shared_image_is_kept_until_last_reference_is_deleted(self):
+        shared_name = "recommendations/shared.jpg"
+        shared_path = os.path.join(self.media_root, shared_name)
+        os.makedirs(os.path.dirname(shared_path), exist_ok=True)
+        with open(shared_path, "wb") as image_file:
+            image_file.write(b"shared-image")
+
+        first = DailyRecommendation.objects.create(
+            name="First Dish",
+            price="12.00",
+            image=shared_name,
+        )
+        second = DailyRecommendation.objects.create(
+            name="Second Dish",
+            price="13.00",
+            image=shared_name,
+        )
+
+        first.delete()
+
+        self.assertTrue(os.path.exists(shared_path))
+
+        second.delete()
+
+        self.assertFalse(os.path.exists(shared_path))
