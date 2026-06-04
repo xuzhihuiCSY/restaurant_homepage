@@ -66,6 +66,24 @@ class RestaurantPhoto(models.Model):
         return self.title or f"Restaurant photo {self.pk}"
 
 
+class CustomerReview(models.Model):
+    customer_name = models.CharField(max_length=120)
+    quote = models.TextField()
+    rating = models.PositiveSmallIntegerField(default=5)
+    is_visible = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def clean(self):
+        if self.rating < 1 or self.rating > 5:
+            raise ValidationError({"rating": "Rating must be between 1 and 5."})
+
+    def __str__(self):
+        return f"{self.customer_name} review"
+
+
 class Event(models.Model):
     title = models.CharField(max_length=140)
     description = models.TextField(blank=True)

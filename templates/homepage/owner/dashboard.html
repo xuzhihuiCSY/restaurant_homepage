@@ -10,8 +10,59 @@
         <div class="quick-actions">
             <a class="button secondary" href="{% url 'homepage:photo_create' %}">Add photo</a>
             <a class="button primary" href="{% url 'homepage:recommendation_create' %}">Add recommendation</a>
+            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add review</a>
             <a class="button secondary" href="{% url 'homepage:event_create' %}">Add event</a>
         </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">Reviews</p>
+                <h2>Customer reviews</h2>
+            </div>
+            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add review</a>
+        </div>
+        {% if customer_reviews %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Review</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Order</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in customer_reviews %}
+                            <tr>
+                                <td>
+                                    <strong>{{ review.customer_name }}</strong>
+                                    <small>{{ review.quote|truncatechars:110 }}</small>
+                                </td>
+                                <td>{{ review.rating }}/5</td>
+                                <td>
+                                    {% if review.is_visible %}
+                                        <span class="pill live">Visible</span>
+                                    {% else %}
+                                        <span class="pill muted">Hidden</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ review.order }}</td>
+                                <td class="row-actions">
+                                    <a href="{% url 'homepage:review_edit' review.pk %}">Edit</a>
+                                    <a class="danger" href="{% url 'homepage:review_delete' review.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No customer reviews are configured yet.</p>
+        {% endif %}
     </section>
 
     <section class="panel">

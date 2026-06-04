@@ -6,12 +6,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .forms import (
+    CustomerReviewForm,
     DailyRecommendationForm,
     EventForm,
     RestaurantPhotoForm,
     RestaurantProfileForm,
 )
-from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
+from .models import (
+    CustomerReview,
+    DailyRecommendation,
+    Event,
+    RestaurantPhoto,
+    RestaurantProfile,
+)
 
 
 def home(request):
@@ -36,6 +43,7 @@ def home(request):
         event_date__gte=today,
     )[:3]
     restaurant_photos = RestaurantPhoto.objects.filter(is_visible=True)[:6]
+    customer_reviews = CustomerReview.objects.filter(is_visible=True)[:3]
 
     return render(
         request,
@@ -44,6 +52,7 @@ def home(request):
             "profile": profile,
             "restaurant_photos": restaurant_photos,
             "recommendations": recommendations,
+            "customer_reviews": customer_reviews,
             "upcoming_events": upcoming_events,
         },
     )
@@ -67,6 +76,7 @@ def owner_dashboard(request):
     today = timezone.localdate()
     restaurant_photos = RestaurantPhoto.objects.all()[:12]
     recommendations = DailyRecommendation.objects.filter(display_date__gte=today)[:12]
+    customer_reviews = CustomerReview.objects.all()[:12]
     upcoming_events = Event.objects.filter(event_date__gte=today)[:8]
 
     return render(
@@ -76,6 +86,7 @@ def owner_dashboard(request):
             "profile_form": profile_form,
             "restaurant_photos": restaurant_photos,
             "recommendations": recommendations,
+            "customer_reviews": customer_reviews,
             "upcoming_events": upcoming_events,
             "today": today,
         },
@@ -89,6 +100,39 @@ def recommendation_create(request):
         DailyRecommendationForm,
         "homepage/owner/form.html",
         "Add today's recommended dish",
+    )
+
+
+@staff_member_required
+def review_create(request):
+    return _save_model_form(
+        request,
+        CustomerReviewForm,
+        "homepage/owner/form.html",
+        "Add customer review",
+    )
+
+
+@staff_member_required
+def review_edit(request, pk):
+    review = get_object_or_404(CustomerReview, pk=pk)
+    return _save_model_form(
+        request,
+        CustomerReviewForm,
+        "homepage/owner/form.html",
+        "Edit customer review",
+        instance=review,
+    )
+
+
+@staff_member_required
+def review_delete(request, pk):
+    review = get_object_or_404(CustomerReview, pk=pk)
+    return _confirm_delete(
+        request,
+        review,
+        "Delete customer review",
+        f"Delete {review.customer_name}'s review from the homepage?",
     )
 
 

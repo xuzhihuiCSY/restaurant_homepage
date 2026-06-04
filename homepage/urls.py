@@ -14,6 +14,9 @@ urlpatterns = [
         views.restaurant_photo_delete,
         name="photo_delete",
     ),
+    path("owner/reviews/new/", views.review_create, name="review_create"),
+    path("owner/reviews/<int:pk>/edit/", views.review_edit, name="review_edit"),
+    path("owner/reviews/<int:pk>/delete/", views.review_delete, name="review_delete"),
     path(
         "owner/recommendations/new/",
         views.recommendation_create,

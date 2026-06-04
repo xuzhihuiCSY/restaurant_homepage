@@ -14,6 +14,7 @@
         <nav class="site-nav" aria-label="Main navigation">
             <a href="#photos">Photos</a>
             <a href="#recommendations">Today</a>
+            <a href="#reviews">Reviews</a>
             <a href="#events">Events</a>
             <a href="#contact">Contact</a>
             {% if request.user.is_staff %}
@@ -82,6 +83,36 @@
                 </div>
             {% else %}
                 <p class="empty-state">Today's recommended dishes are coming soon.</p>
+            {% endif %}
+        </section>
+
+        <section id="reviews" class="section reviews-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Reviews</p>
+                    <h2>What guests say</h2>
+                </div>
+            </div>
+            {% if customer_reviews %}
+                <div class="review-grid">
+                    {% for review in customer_reviews %}
+                        <article class="review-card">
+                            <div class="stars" aria-label="{{ review.rating }} out of 5 stars">
+                                {% for _ in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span>*</span>
+                                    {% else %}
+                                        <span class="empty-star">*</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <blockquote>{{ review.quote }}</blockquote>
+                            <p>{{ review.customer_name }}</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">Customer reviews will appear here.</p>
             {% endif %}
         </section>
 

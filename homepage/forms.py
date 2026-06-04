@@ -1,6 +1,12 @@
 from django import forms
 
-from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
+from .models import (
+    CustomerReview,
+    DailyRecommendation,
+    Event,
+    RestaurantPhoto,
+    RestaurantProfile,
+)
 
 
 class RestaurantProfileForm(forms.ModelForm):
@@ -68,3 +74,18 @@ class RestaurantPhotoForm(forms.ModelForm):
             "is_visible",
             "order",
         ]
+
+
+class CustomerReviewForm(forms.ModelForm):
+    class Meta:
+        model = CustomerReview
+        fields = [
+            "customer_name",
+            "quote",
+            "rating",
+            "is_visible",
+            "order",
+        ]
+        widgets = {
+            "quote": forms.Textarea(attrs={"rows": 4}),
+        }

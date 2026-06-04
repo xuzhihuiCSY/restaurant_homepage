@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import DailyRecommendation, Event
+from .models import CustomerReview, DailyRecommendation, Event
 
 
 class HomePageTests(TestCase):
@@ -16,6 +16,7 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Restaurant Name")
         self.assertContains(response, "Restaurant photos")
         self.assertContains(response, "Chef recommended dishes")
+        self.assertContains(response, "What guests say")
 
     def test_today_recommendation_renders_on_homepage(self):
         DailyRecommendation.objects.create(
@@ -40,6 +41,21 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Jan 5")
         self.assertNotContains(response, "1月")
 
+    def test_visible_customer_review_renders_between_recommendations_and_events(self):
+        CustomerReview.objects.create(
+            customer_name="Alex",
+            quote="Great karaoke night and friendly staff.",
+            rating=5,
+            is_visible=True,
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+        content = response.content.decode()
+
+        self.assertContains(response, "Great karaoke night and friendly staff.")
+        self.assertLess(content.index("Chef recommended dishes"), content.index("What guests say"))
+        self.assertLess(content.index("What guests say"), content.index("Upcoming dates"))
+
 
 class OwnerControlsTests(TestCase):
     def test_owner_dashboard_requires_staff_login(self):
@@ -57,6 +73,7 @@ class OwnerControlsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Homepage display controls")
         self.assertContains(response, "Restaurant photo display")
+        self.assertContains(response, "Customer reviews")
 
     def test_staff_can_create_today_recommendation(self):
         user = self._create_staff_user()

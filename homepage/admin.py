@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import DailyRecommendation, Event, RestaurantPhoto, RestaurantProfile
+from .models import (
+    CustomerReview,
+    DailyRecommendation,
+    Event,
+    RestaurantPhoto,
+    RestaurantProfile,
+)
 
 
 @admin.register(RestaurantProfile)
@@ -51,4 +57,12 @@ class RestaurantPhotoAdmin(admin.ModelAdmin):
     list_display = ("title", "is_visible", "order")
     list_editable = ("is_visible", "order")
     search_fields = ("title",)
+    ordering = ("order", "id")
+
+
+@admin.register(CustomerReview)
+class CustomerReviewAdmin(admin.ModelAdmin):
+    list_display = ("customer_name", "rating", "is_visible", "order")
+    list_editable = ("rating", "is_visible", "order")
+    search_fields = ("customer_name", "quote")
     ordering = ("order", "id")
