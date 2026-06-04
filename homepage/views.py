@@ -109,7 +109,7 @@ def review_create(request):
         request,
         CustomerReviewForm,
         "homepage/owner/form.html",
-        "Add customer review",
+        "Add review highlight",
     )
 
 
@@ -120,7 +120,7 @@ def review_edit(request, pk):
         request,
         CustomerReviewForm,
         "homepage/owner/form.html",
-        "Edit customer review",
+        "Edit review highlight",
         instance=review,
     )
 
@@ -131,8 +131,8 @@ def review_delete(request, pk):
     return _confirm_delete(
         request,
         review,
-        "Delete customer review",
-        f"Delete {review.customer_name}'s review from the homepage?",
+        "Delete review highlight",
+        f"Delete {review.customer_name}'s review highlight from the homepage?",
     )
 
 

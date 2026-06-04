@@ -73,7 +73,7 @@ class OwnerControlsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Homepage display controls")
         self.assertContains(response, "Restaurant photo display")
-        self.assertContains(response, "Customer reviews")
+        self.assertContains(response, "Review highlights")
 
     def test_staff_can_create_today_recommendation(self):
         user = self._create_staff_user()

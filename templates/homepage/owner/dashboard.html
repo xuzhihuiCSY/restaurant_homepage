@@ -10,7 +10,7 @@
         <div class="quick-actions">
             <a class="button secondary" href="{% url 'homepage:photo_create' %}">Add photo</a>
             <a class="button primary" href="{% url 'homepage:recommendation_create' %}">Add recommendation</a>
-            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add review</a>
+            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add review highlight</a>
             <a class="button secondary" href="{% url 'homepage:event_create' %}">Add event</a>
         </div>
     </section>
@@ -19,9 +19,9 @@
         <div class="panel-heading">
             <div>
                 <p class="eyebrow">Reviews</p>
-                <h2>Customer reviews</h2>
+                <h2>Review highlights</h2>
             </div>
-            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add review</a>
+            <a class="button secondary" href="{% url 'homepage:review_create' %}">Add highlight</a>
         </div>
         {% if customer_reviews %}
             <div class="table-wrap">
@@ -61,7 +61,7 @@
                 </table>
             </div>
         {% else %}
-            <p class="empty-state">No customer reviews are configured yet.</p>
+            <p class="empty-state">No owner-written review highlights are configured yet.</p>
         {% endif %}
     </section>
 

@@ -77,6 +77,13 @@ class RestaurantPhotoForm(forms.ModelForm):
 
 
 class CustomerReviewForm(forms.ModelForm):
+    customer_name = forms.CharField(label="Display name")
+    quote = forms.CharField(
+        label="Review text",
+        widget=forms.Textarea(attrs={"rows": 4}),
+    )
+    rating = forms.IntegerField(label="Displayed rating", min_value=1, max_value=5)
+
     class Meta:
         model = CustomerReview
         fields = [
@@ -86,6 +93,3 @@ class CustomerReviewForm(forms.ModelForm):
             "is_visible",
             "order",
         ]
-        widgets = {
-            "quote": forms.Textarea(attrs={"rows": 4}),
-        }
