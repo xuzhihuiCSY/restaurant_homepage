@@ -269,12 +269,10 @@ h3 {
     overscroll-behavior-inline: contain;
     padding: 0 clamp(20px, 5vw, 72px) 14px;
     scroll-padding-inline: clamp(20px, 5vw, 72px);
-    scroll-snap-type: x proximity;
 }
 
 .recommendation-strip .menu-card {
     min-width: 0;
-    scroll-snap-align: start;
 }
 
 .recommendation-strip::-webkit-scrollbar {

@@ -1,7 +1,7 @@
 (function () {
     const strip = document.querySelector(".recommendation-strip");
 
-    if (!strip || strip.scrollWidth <= strip.clientWidth) {
+    if (!strip) {
         return;
     }
 
@@ -10,9 +10,41 @@
         return;
     }
 
+    const originalCards = Array.from(strip.children);
+    if (originalCards.length === 0) {
+        return;
+    }
+
+    function cloneCards() {
+        const clones = originalCards.map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            clone.classList.add("is-clone");
+            strip.appendChild(clone);
+            return clone;
+        });
+
+        return clones;
+    }
+
+    const firstCloneSet = cloneCards();
+    const firstOriginal = originalCards[0];
+    const firstClone = firstCloneSet[0];
+    const cycleWidth = firstClone.offsetLeft - firstOriginal.offsetLeft;
+
+    if (cycleWidth <= 0) {
+        return;
+    }
+
+    let safetyCounter = 0;
+    while (strip.scrollWidth < strip.clientWidth + cycleWidth && safetyCounter < 6) {
+        cloneCards();
+        safetyCounter += 1;
+    }
+
     let paused = false;
     let lastFrame = null;
-    const speed = 24;
+    const speed = 58;
 
     function step(timestamp) {
         if (lastFrame === null) {
@@ -25,8 +57,8 @@
         if (!paused) {
             strip.scrollLeft += (speed * elapsed) / 1000;
 
-            if (strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 1) {
-                strip.scrollLeft = 0;
+            if (strip.scrollLeft >= cycleWidth) {
+                strip.scrollLeft -= cycleWidth;
             }
         }
 
