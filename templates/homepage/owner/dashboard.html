@@ -15,11 +15,11 @@
         </div>
     </section>
 
-    <form class="owner-form" method="post" enctype="multipart/form-data">
+    <form class="owner-form profile-controls" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ profile_form.non_field_errors }}
 
-        <section class="panel">
+        <section class="panel settings-panel homepage-settings">
             <div class="panel-heading">
                 <div>
                     <p class="eyebrow">Restaurant</p>
@@ -27,66 +27,68 @@
                 </div>
             </div>
             <div class="form-grid">
-                <label>
+                <label class="field-control">
                     <span>{{ profile_form.name.label }}</span>
                     {{ profile_form.name }}
                     {{ profile_form.name.errors }}
                 </label>
-                <label>
+                <label class="field-control">
                     <span>{{ profile_form.tagline.label }}</span>
                     {{ profile_form.tagline }}
                     {{ profile_form.tagline.errors }}
                 </label>
-                <label class="wide">
+                <label class="field-control wide">
                     <span>{{ profile_form.description.label }}</span>
                     {{ profile_form.description }}
                     {{ profile_form.description.errors }}
                 </label>
-                <label>
+                <label class="field-control">
                     <span>{{ profile_form.phone.label }}</span>
                     {{ profile_form.phone }}
                     {{ profile_form.phone.errors }}
                 </label>
-                <label>
+                <label class="field-control">
                     <span>{{ profile_form.email.label }}</span>
                     {{ profile_form.email }}
                     {{ profile_form.email.errors }}
                 </label>
-                <label>
+                <label class="field-control">
                     <span>{{ profile_form.primary_contact_method.label }}</span>
                     {{ profile_form.primary_contact_method }}
                     {{ profile_form.primary_contact_method.errors }}
                 </label>
-                <label>
+                <label class="field-control media-field">
                     <span>{{ profile_form.hero_image.label }}</span>
                     {{ profile_form.hero_image }}
                     {{ profile_form.hero_image.errors }}
                 </label>
-                <label>
+                <label class="field-control media-field">
                     <span>{{ profile_form.logo.label }}</span>
                     {{ profile_form.logo }}
                     {{ profile_form.logo.errors }}
                 </label>
-                <label class="wide">
+                <label class="field-control wide">
                     <span>{{ profile_form.address.label }}</span>
                     {{ profile_form.address }}
                     {{ profile_form.address.errors }}
                 </label>
-                <label class="wide">
+                <label class="field-control wide">
                     <span>{{ profile_form.opening_hours.label }}</span>
                     {{ profile_form.opening_hours }}
                     {{ profile_form.opening_hours.errors }}
                 </label>
-                <label class="wide">
+                <label class="field-control wide">
                     <span>{{ profile_form.map_url.label }}</span>
                     {{ profile_form.map_url }}
                     {{ profile_form.map_url.errors }}
                 </label>
             </div>
-            <button class="button primary" type="submit">Save homepage details</button>
+            <div class="panel-actions">
+                <button class="button primary" type="submit">Save homepage details</button>
+            </div>
         </section>
 
-        <section class="panel">
+        <section class="panel settings-panel order-settings">
             <div class="panel-heading">
                 <div>
                     <p class="eyebrow">Ordering</p>
@@ -94,31 +96,33 @@
                 </div>
             </div>
             <div class="form-grid">
-                <label class="checkbox-row wide">
+                <label class="checkbox-row toggle-control wide">
                     {{ profile_form.show_online_order }}
                     <span>{{ profile_form.show_online_order.label }}</span>
                     {{ profile_form.show_online_order.errors }}
                 </label>
-                <label class="wide">
+                <label class="field-control wide">
                     <span>{{ profile_form.online_order_url.label }}</span>
                     {{ profile_form.online_order_url }}
                     {{ profile_form.online_order_url.errors }}
                 </label>
-                <label>
+                <label class="field-control media-field">
                     <span>{{ profile_form.online_order_image_left.label }}</span>
                     {{ profile_form.online_order_image_left }}
                     {{ profile_form.online_order_image_left.errors }}
                 </label>
-                <label>
+                <label class="field-control media-field">
                     <span>{{ profile_form.online_order_image_right.label }}</span>
                     {{ profile_form.online_order_image_right }}
                     {{ profile_form.online_order_image_right.errors }}
                 </label>
             </div>
-            <button class="button primary" type="submit">Save online order</button>
+            <div class="panel-actions">
+                <button class="button primary" type="submit">Save online order</button>
+            </div>
         </section>
 
-        <section class="panel">
+        <section class="panel settings-panel reviews-settings">
             <div class="panel-heading">
                 <div>
                     <p class="eyebrow">Reviews</p>
@@ -126,16 +130,18 @@
                 </div>
                 <a class="button secondary" href="{% url 'homepage:review_create' %}">Add highlight</a>
             </div>
-            <div class="form-grid single">
-                <label class="wide">
+            <div class="form-grid single review-display-fields">
+                <label class="field-control media-field wide">
                     <span>{{ profile_form.reviews_background_image.label }}</span>
                     {{ profile_form.reviews_background_image }}
                     {{ profile_form.reviews_background_image.errors }}
                 </label>
             </div>
-            <button class="button primary" type="submit">Save review display</button>
+            <div class="panel-actions">
+                <button class="button primary" type="submit">Save review display</button>
+            </div>
             {% if customer_reviews %}
-                <div class="table-wrap">
+                <div class="table-wrap panel-table">
                     <table>
                         <thead>
                             <tr>
@@ -172,7 +178,7 @@
                     </table>
                 </div>
             {% else %}
-                <p class="empty-state">No owner-written review highlights are configured yet.</p>
+                <p class="empty-state panel-empty">No owner-written review highlights are configured yet.</p>
             {% endif %}
         </section>
     </form>

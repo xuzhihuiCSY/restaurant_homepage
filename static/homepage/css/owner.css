@@ -4,6 +4,7 @@
     --line: #ded8cf;
     --paper: #f7f4ef;
     --panel: #ffffff;
+    --panel-soft: #fbfaf7;
     --accent: #b6462f;
     --accent-dark: #88311f;
     --green: #2f6b45;
@@ -179,6 +180,87 @@ h2 {
     gap: 18px;
 }
 
+.profile-controls {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.settings-panel {
+    overflow: hidden;
+    padding: 0;
+}
+
+.settings-panel .panel-heading {
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+    padding: clamp(18px, 3vw, 26px) clamp(20px, 4vw, 32px);
+    background: var(--panel-soft);
+}
+
+.settings-panel .form-grid {
+    padding: clamp(18px, 3vw, 26px) clamp(20px, 4vw, 32px);
+}
+
+.homepage-settings .form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.order-settings .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field-control > span,
+.toggle-control > span {
+    color: var(--ink);
+}
+
+.media-field {
+    align-content: start;
+    min-height: 92px;
+    color: var(--muted);
+}
+
+.media-field a {
+    color: var(--accent-dark);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.media-field input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+}
+
+.toggle-control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 10px;
+    min-height: 48px;
+}
+
+.toggle-control .errorlist {
+    grid-column: 1 / -1;
+}
+
+.panel-actions {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid var(--line);
+    padding: 16px clamp(20px, 4vw, 32px);
+    background: var(--panel-soft);
+}
+
+.panel-table {
+    border-top: 1px solid var(--line);
+    padding: 0 clamp(20px, 4vw, 32px);
+}
+
+.panel-empty {
+    border-top: 1px solid var(--line);
+    padding: 18px clamp(20px, 4vw, 32px);
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -221,6 +303,10 @@ select {
     background: #fff;
     color: var(--ink);
     font: inherit;
+}
+
+input[type="file"] {
+    padding: 8px;
 }
 
 textarea {
@@ -308,6 +394,12 @@ td small {
     color: var(--muted);
 }
 
+@media (max-width: 1040px) {
+    .homepage-settings .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 760px) {
     .owner-header,
     .owner-hero,
@@ -317,6 +409,11 @@ td small {
     }
 
     .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .homepage-settings .form-grid,
+    .order-settings .form-grid {
         grid-template-columns: 1fr;
     }
 }
