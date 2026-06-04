@@ -1,0 +1,163 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ profile.description|default:profile.tagline }}">
+    <title>{{ profile.name }}</title>
+    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="#top">{{ profile.name }}</a>
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="#menu">Menu</a>
+            <a href="#offers">Offers</a>
+            <a href="#events">Events</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">{{ profile.tagline|default:"Local restaurant" }}</p>
+                <h1>{{ profile.name }}</h1>
+                <p>{{ profile.description|default:"Fresh food, warm service, and a simple place to gather." }}</p>
+                <div class="hero-actions">
+                    <a class="button primary" href="#menu">View menu</a>
+                    {% if profile.phone %}
+                        <a class="button secondary" href="tel:{{ profile.phone }}">Call now</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hero-media">
+                {% if profile.hero_image %}
+                    <img src="{{ profile.hero_image.url }}" alt="{{ profile.name }}">
+                {% else %}
+                    <div class="hero-placeholder">Restaurant Homepage</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="menu" class="section">
+            <div class="section-heading">
+                <p class="eyebrow">Featured</p>
+                <h2>Recommended dishes</h2>
+            </div>
+            {% if featured_items %}
+                <div class="item-grid">
+                    {% for item in featured_items %}
+                        {% include "homepage/partials/menu_card.html" with item=item %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">Menu highlights are coming soon.</p>
+            {% endif %}
+        </section>
+
+        <section id="offers" class="section accent">
+            <div class="section-heading">
+                <p class="eyebrow">On sale</p>
+                <h2>Current offers</h2>
+            </div>
+            {% if sale_items %}
+                <div class="item-grid compact">
+                    {% for item in sale_items %}
+                        {% include "homepage/partials/menu_card.html" with item=item %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No active offers right now.</p>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <p class="eyebrow">Menu</p>
+                <h2>Browse by category</h2>
+            </div>
+            <div class="menu-list">
+                {% for category in categories %}
+                    {% if category.items.all %}
+                        <article class="category-block">
+                            <h3>{{ category.name }}</h3>
+                            {% for item in category.items.all %}
+                                <div class="menu-row">
+                                    <div>
+                                        <h4>{{ item.name }}</h4>
+                                        {% if item.description %}
+                                            <p>{{ item.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="price">
+                                        {% if item.is_on_sale and item.sale_price %}
+                                            <span class="old-price">${{ item.base_price }}</span>
+                                            <span>${{ item.sale_price }}</span>
+                                        {% else %}
+                                            <span>${{ item.base_price }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </article>
+                    {% endif %}
+                {% empty %}
+                    <p class="empty-state">Menu categories are coming soon.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section id="events" class="section">
+            <div class="section-heading">
+                <p class="eyebrow">Events</p>
+                <h2>Upcoming dates</h2>
+            </div>
+            {% if upcoming_events %}
+                <div class="event-list">
+                    {% for event in upcoming_events %}
+                        <article class="event-card">
+                            <time datetime="{{ event.event_date|date:'Y-m-d' }}">
+                                {{ event.event_date|date:"M j" }}
+                            </time>
+                            <div>
+                                <h3>{{ event.title }}</h3>
+                                {% if event.start_time %}
+                                    <p>{{ event.start_time|time:"g:i A" }}</p>
+                                {% endif %}
+                                {% if event.description %}
+                                    <p>{{ event.description }}</p>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">Upcoming events will appear here.</p>
+            {% endif %}
+        </section>
+
+        <section id="contact" class="section contact-section">
+            <div>
+                <p class="eyebrow">Visit</p>
+                <h2>Contact and location</h2>
+            </div>
+            <div class="contact-grid">
+                {% if profile.phone %}
+                    <p><strong>Phone</strong><br><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
+                {% endif %}
+                {% if profile.address %}
+                    <p><strong>Address</strong><br>{{ profile.address }}</p>
+                {% endif %}
+                {% if profile.opening_hours %}
+                    <p><strong>Hours</strong><br>{{ profile.opening_hours }}</p>
+                {% endif %}
+                {% if profile.map_url %}
+                    <p><strong>Map</strong><br><a href="{{ profile.map_url }}" target="_blank" rel="noopener">Open in maps</a></p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
