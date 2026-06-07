@@ -204,7 +204,8 @@ h2 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.order-settings .form-grid {
+.order-settings .form-grid,
+.group-reservation-settings .form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -215,7 +216,7 @@ h2 {
 
 .media-field {
     align-content: start;
-    min-height: 92px;
+    min-height: 0;
     color: var(--muted);
 }
 
@@ -223,6 +224,29 @@ h2 {
     color: var(--accent-dark);
     font-weight: 800;
     overflow-wrap: anywhere;
+}
+
+.current-file-preview {
+    display: grid;
+    width: min(96px, 100%);
+    gap: 6px;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.current-file-preview img {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    object-fit: cover;
+    background: var(--panel-soft);
+}
+
+.media-field input[type="file"] {
+    max-width: 320px;
 }
 
 .media-field input[type="checkbox"] {
@@ -413,7 +437,8 @@ td small {
     }
 
     .homepage-settings .form-grid,
-    .order-settings .form-grid {
+    .order-settings .form-grid,
+    .group-reservation-settings .form-grid {
         grid-template-columns: 1fr;
     }
 }

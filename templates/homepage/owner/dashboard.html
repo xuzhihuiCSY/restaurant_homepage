@@ -122,6 +122,35 @@
             </div>
         </section>
 
+        <section class="panel settings-panel group-reservation-settings">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Reservations</p>
+                    <h2>Group reservation</h2>
+                </div>
+            </div>
+            <div class="form-grid">
+                <label class="checkbox-row toggle-control wide">
+                    {{ profile_form.show_group_reservation }}
+                    <span>{{ profile_form.show_group_reservation.label }}</span>
+                    {{ profile_form.show_group_reservation.errors }}
+                </label>
+                <label class="field-control wide">
+                    <span>{{ profile_form.group_reservation_email.label }}</span>
+                    {{ profile_form.group_reservation_email }}
+                    {{ profile_form.group_reservation_email.errors }}
+                </label>
+                <label class="field-control media-field wide">
+                    <span>{{ profile_form.group_reservation_background_image.label }}</span>
+                    {{ profile_form.group_reservation_background_image }}
+                    {{ profile_form.group_reservation_background_image.errors }}
+                </label>
+            </div>
+            <div class="panel-actions">
+                <button class="button primary" type="submit">Save group reservation</button>
+            </div>
+        </section>
+
         <section class="panel settings-panel reviews-settings">
             <div class="panel-heading">
                 <div>
@@ -233,8 +262,8 @@
     <section class="panel">
         <div class="panel-heading">
             <div>
-                <p class="eyebrow">{{ today }}</p>
-                <h2>Today and scheduled recommended dishes</h2>
+                <p class="eyebrow">Manual display</p>
+                <h2>Recommended dishes</h2>
             </div>
             <a class="button secondary" href="{% url 'homepage:recommendation_create' %}">Add dish</a>
         </div>
@@ -244,7 +273,6 @@
                     <thead>
                         <tr>
                             <th>Dish</th>
-                            <th>Date</th>
                             <th>Price</th>
                             <th>Status</th>
                             <th>Sale</th>
@@ -261,7 +289,6 @@
                                         <small>{{ item.description|truncatechars:90 }}</small>
                                     {% endif %}
                                 </td>
-                                <td>{{ item.display_date }}</td>
                                 <td>
                                     {% if item.is_on_sale and item.sale_price %}
                                         <span class="old-price">${{ item.price }}</span>
@@ -295,7 +322,7 @@
                 </table>
             </div>
         {% else %}
-            <p class="empty-state">No dishes are configured for today yet.</p>
+            <p class="empty-state">No recommended dishes are configured yet.</p>
         {% endif %}
     </section>
 

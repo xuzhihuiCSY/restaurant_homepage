@@ -31,6 +31,19 @@ class RestaurantProfile(models.Model):
     online_order_url = models.URLField(blank=True)
     online_order_image_left = models.ImageField(upload_to="restaurant/", blank=True)
     online_order_image_right = models.ImageField(upload_to="restaurant/", blank=True)
+    show_group_reservation = models.BooleanField(
+        "show group reservation section",
+        default=False,
+    )
+    group_reservation_email = models.EmailField(
+        "group reservation manager email",
+        blank=True,
+    )
+    group_reservation_background_image = models.ImageField(
+        "group reservation background image",
+        upload_to="restaurant/",
+        blank=True,
+    )
     hero_image = models.ImageField(upload_to="restaurant/", blank=True)
     reviews_background_image = models.ImageField(upload_to="restaurant/", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -50,6 +63,10 @@ class RestaurantProfile(models.Model):
             errors["online_order_image_left"] = "Left online order image is required when the section is visible."
         if self.show_online_order and not self.online_order_image_right:
             errors["online_order_image_right"] = "Right online order image is required when the section is visible."
+        if self.show_group_reservation and not self.group_reservation_email:
+            errors["group_reservation_email"] = "Manager email is required when the group reservation section is visible."
+        if self.show_group_reservation and not self.group_reservation_background_image:
+            errors["group_reservation_background_image"] = "Background image is required when the group reservation section is visible."
         if errors:
             raise ValidationError(errors)
 
@@ -71,7 +88,7 @@ class DailyRecommendation(models.Model):
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["display_date", "order", "name"]
+        ordering = ["order", "name"]
 
     def clean(self):
         if self.is_on_sale and self.sale_price is None:

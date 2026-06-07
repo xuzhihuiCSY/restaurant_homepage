@@ -1,4 +1,6 @@
 from django import forms
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from .models import (
     CustomerReview,
@@ -7,6 +9,24 @@ from .models import (
     RestaurantPhoto,
     RestaurantProfile,
 )
+
+
+class ReplaceOnlyFileInput(forms.ClearableFileInput):
+    def render(self, name, value, attrs=None, renderer=None):
+        file_input = forms.FileInput().render(name, None, attrs, renderer)
+
+        if value and getattr(value, "url", None):
+            current_file = format_html(
+                '<a class="current-file-preview" href="{}" target="_blank" rel="noopener">'
+                '<img src="{}" alt="Current uploaded image">'
+                "<span>Current image</span>"
+                "</a>",
+                value.url,
+                value.url,
+            )
+            return mark_safe(f"{current_file}{file_input}")
+
+        return file_input
 
 
 class RestaurantProfileForm(forms.ModelForm):
@@ -27,11 +47,20 @@ class RestaurantProfileForm(forms.ModelForm):
             "online_order_url",
             "online_order_image_left",
             "online_order_image_right",
+            "show_group_reservation",
+            "group_reservation_email",
+            "group_reservation_background_image",
             "hero_image",
             "reviews_background_image",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "logo": ReplaceOnlyFileInput,
+            "online_order_image_left": ReplaceOnlyFileInput,
+            "online_order_image_right": ReplaceOnlyFileInput,
+            "group_reservation_background_image": ReplaceOnlyFileInput,
+            "hero_image": ReplaceOnlyFileInput,
+            "reviews_background_image": ReplaceOnlyFileInput,
         }
 
 
@@ -42,7 +71,6 @@ class DailyRecommendationForm(forms.ModelForm):
             "name",
             "description",
             "price",
-            "display_date",
             "is_available",
             "is_on_sale",
             "sale_price",
@@ -51,7 +79,7 @@ class DailyRecommendationForm(forms.ModelForm):
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
-            "display_date": forms.DateInput(attrs={"type": "date"}),
+            "image": ReplaceOnlyFileInput,
         }
 
 
@@ -70,6 +98,7 @@ class EventForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"rows": 4}),
             "event_date": forms.DateInput(attrs={"type": "date"}),
             "start_time": forms.TimeInput(attrs={"type": "time"}),
+            "cover_image": ReplaceOnlyFileInput,
         }
 
 
@@ -82,6 +111,9 @@ class RestaurantPhotoForm(forms.ModelForm):
             "is_visible",
             "order",
         ]
+        widgets = {
+            "image": ReplaceOnlyFileInput,
+        }
 
 
 class CustomerReviewForm(forms.ModelForm):

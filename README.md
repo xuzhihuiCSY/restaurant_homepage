@@ -1,6 +1,6 @@
 # Restaurant Homepage
 
-A simple Django-rendered restaurant homepage. The project uses Django views, templates, static CSS, SQLite, and Django Admin to manage restaurant information, restaurant photos, today's recommended dishes, owner-written review highlights, and events.
+A simple Django-rendered restaurant homepage. The project uses Django views, templates, static CSS, SQLite, and Django Admin to manage restaurant information, restaurant photos, recommended dishes, owner-written review highlights, and events.
 
 ## Local Setup
 
@@ -15,6 +15,6 @@ python manage.py runserver
 
 Open the public homepage at `http://127.0.0.1:8000/` and manage content at `http://127.0.0.1:8000/admin/`.
 
-Owner-friendly controls are available at `http://127.0.0.1:8000/owner/` for staff users. Use this page to update homepage details, restaurant logo, phone/email contact preference, optional online ordering with two display images, restaurant photos, today's and scheduled recommended dishes, owner-written review highlights, discounts, and upcoming events.
+Owner-friendly controls are available at `http://127.0.0.1:8000/owner/` for staff users. Use this page to update homepage details, restaurant logo, phone/email contact preference, optional online ordering with two display images, restaurant photos, manually arranged recommended dishes, owner-written review highlights, discounts, and upcoming events.
 
 Uploaded media files are cleaned up automatically when the owner deletes a record or replaces an image. Files that are still referenced by another record are kept until the final reference is removed.

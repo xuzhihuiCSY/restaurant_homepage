@@ -23,7 +23,6 @@ class RestaurantProfileAdmin(admin.ModelAdmin):
 class DailyRecommendationAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "display_date",
         "price",
         "sale_price",
         "is_available",
@@ -31,16 +30,15 @@ class DailyRecommendationAdmin(admin.ModelAdmin):
         "order",
     )
     list_editable = (
-        "display_date",
         "price",
         "sale_price",
         "is_available",
         "is_on_sale",
         "order",
     )
-    list_filter = ("display_date", "is_available", "is_on_sale")
+    list_filter = ("is_available", "is_on_sale")
     search_fields = ("name", "description")
-    ordering = ("-display_date", "order", "name")
+    ordering = ("order", "name")
 
 
 @admin.register(Event)

@@ -86,3 +86,62 @@
 
     window.requestAnimationFrame(step);
 })();
+
+(function () {
+    const modal = document.querySelector("#event-modal");
+    const modalContent = document.querySelector(".event-modal-content");
+    const eventDays = document.querySelectorAll(".calendar-day-button.has-events");
+
+    if (!modal || !modalContent || eventDays.length === 0) {
+        return;
+    }
+
+    let activeTrigger = null;
+
+    function openModal(trigger) {
+        const details = trigger.querySelector(".calendar-event-details");
+
+        if (!details) {
+            return;
+        }
+
+        activeTrigger = trigger;
+        modalContent.innerHTML = details.innerHTML;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+
+        const closeButton = modal.querySelector(".event-modal-close");
+        if (closeButton) {
+            closeButton.focus();
+        }
+    }
+
+    function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        modalContent.innerHTML = "";
+
+        if (activeTrigger) {
+            activeTrigger.focus();
+            activeTrigger = null;
+        }
+    }
+
+    eventDays.forEach((day) => {
+        day.addEventListener("click", () => openModal(day));
+    });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target instanceof Element && event.target.matches("[data-event-modal-close]")) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+        }
+    });
+})();

@@ -1,9 +1,10 @@
 import os
 import shutil
 import tempfile
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -24,11 +25,10 @@ class HomePageTests(TestCase):
         self.assertContains(response, "Chef recommended dishes")
         self.assertContains(response, "What guests say")
 
-    def test_today_recommendation_renders_on_homepage(self):
+    def test_recommendation_renders_on_homepage_without_date_setup(self):
         DailyRecommendation.objects.create(
             name="Lunch Special",
             price="12.50",
-            display_date=timezone.localdate(),
         )
 
         response = self.client.get(reverse("homepage:home"))
@@ -59,6 +59,38 @@ class HomePageTests(TestCase):
 
         self.assertContains(response, "has-event-image")
         self.assertContains(response, "events/live-band.jpg")
+
+    def test_homepage_event_cards_render_nearest_five_events(self):
+        start_date = timezone.localdate() + timedelta(days=35)
+        for index in range(6):
+            Event.objects.create(
+                title=f"Future Event {index + 1}",
+                event_date=start_date + timedelta(days=index),
+                is_published=True,
+            )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "Future Event 1")
+        self.assertContains(response, "Future Event 5")
+        self.assertNotContains(response, "Future Event 6")
+
+    def test_event_calendar_renders_current_month_events(self):
+        Event.objects.create(
+            title="Calendar Night",
+            description="Late set and snacks.",
+            event_date=timezone.localdate(),
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertContains(response, "event-calendar")
+        self.assertContains(response, "Calendar Night")
+        self.assertContains(response, "calendar-day-button")
+        self.assertContains(response, "calendar-event-details")
+        self.assertContains(response, "Late set and snacks.")
+        self.assertContains(response, 'id="event-modal"')
 
     def test_visible_customer_review_renders_between_recommendations_and_events(self):
         CustomerReview.objects.create(
@@ -136,6 +168,47 @@ class HomePageTests(TestCase):
         with self.assertRaises(ValidationError):
             profile.full_clean()
 
+    def test_group_reservation_section_renders_when_visible(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            show_group_reservation=True,
+            group_reservation_email="manager@example.com",
+            group_reservation_background_image="restaurant/group-reservation.jpg",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+        content = response.content.decode()
+
+        self.assertContains(response, 'id="group-reservation"')
+        self.assertContains(response, "Group reservation")
+        self.assertContains(response, "BOOK A PARTY")
+        self.assertContains(response, "restaurant/group-reservation.jpg")
+        self.assertContains(
+            response,
+            'href="mailto:manager@example.com?subject=Group%20reservation%20request"',
+        )
+        self.assertLess(content.index('id="group-reservation"'), content.index("Upcoming dates"))
+
+    def test_group_reservation_email_required_when_section_visible(self):
+        profile = RestaurantProfile(
+            name="Test Restaurant",
+            show_group_reservation=True,
+            group_reservation_background_image="restaurant/group-reservation.jpg",
+        )
+
+        with self.assertRaises(ValidationError):
+            profile.full_clean()
+
+    def test_group_reservation_background_required_when_section_visible(self):
+        profile = RestaurantProfile(
+            name="Test Restaurant",
+            show_group_reservation=True,
+            group_reservation_email="manager@example.com",
+        )
+
+        with self.assertRaises(ValidationError):
+            profile.full_clean()
+
 
 class OwnerControlsTests(TestCase):
     def test_owner_dashboard_requires_staff_login(self):
@@ -157,13 +230,32 @@ class OwnerControlsTests(TestCase):
         self.assertContains(response, "Review highlights")
         self.assertContains(response, "Logo")
         self.assertContains(response, "Online order")
+        self.assertContains(response, "Group reservation")
         self.assertContains(response, "Reviews background image")
         self.assertLess(content.index("Homepage details"), content.index("Online order"))
-        self.assertLess(content.index("Online order"), content.index("Review highlights"))
+        self.assertLess(content.index("Online order"), content.index("Group reservation"))
+        self.assertLess(content.index("Group reservation"), content.index("Review highlights"))
         self.assertLess(content.index("Review highlights"), content.index("Reviews background image"))
         self.assertLess(content.index("Reviews background image"), content.index("Restaurant photo display"))
 
-    def test_staff_can_create_today_recommendation(self):
+    def test_owner_image_fields_do_not_show_clear_checkbox(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            logo="restaurant/logo.png",
+        )
+        user = self._create_staff_user()
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("homepage:owner_dashboard"))
+
+        self.assertContains(response, "current-file-preview")
+        self.assertContains(response, "Current image")
+        self.assertContains(response, 'src="/media/restaurant/logo.png"')
+        self.assertContains(response, "restaurant/logo.png")
+        self.assertNotContains(response, "Clear")
+        self.assertNotContains(response, 'name="logo-clear"')
+
+    def test_staff_can_create_recommendation(self):
         user = self._create_staff_user()
         self.client.force_login(user)
 
@@ -173,7 +265,6 @@ class OwnerControlsTests(TestCase):
                 "name": "Owner Pick",
                 "description": "Shown from owner controls.",
                 "price": "15.00",
-                "display_date": timezone.localdate().isoformat(),
                 "is_available": "on",
                 "order": "1",
             },
@@ -192,11 +283,13 @@ class OwnerControlsTests(TestCase):
 
 class MediaCleanupTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.media_root = tempfile.mkdtemp()
         self.settings_override = override_settings(MEDIA_ROOT=self.media_root)
         self.settings_override.enable()
 
     def tearDown(self):
+        cache.clear()
         self.settings_override.disable()
         shutil.rmtree(self.media_root, ignore_errors=True)
 
@@ -252,3 +345,64 @@ class MediaCleanupTests(TestCase):
         second.delete()
 
         self.assertFalse(os.path.exists(shared_path))
+
+    def test_past_event_cover_image_is_cleared_on_homepage_load(self):
+        event = Event.objects.create(
+            title="Past Party",
+            event_date=timezone.localdate() - timedelta(days=1),
+            cover_image=SimpleUploadedFile("past-party.jpg", b"image-data", content_type="image/jpeg"),
+            is_published=True,
+        )
+        image_path = event.cover_image.path
+
+        self.assertTrue(os.path.exists(image_path))
+
+        self.client.get(reverse("homepage:home"))
+        event.refresh_from_db()
+
+        self.assertEqual(event.cover_image.name, "")
+        self.assertFalse(os.path.exists(image_path))
+
+    def test_future_event_cover_image_is_kept_on_homepage_load(self):
+        event = Event.objects.create(
+            title="Future Party",
+            event_date=timezone.localdate() + timedelta(days=1),
+            cover_image=SimpleUploadedFile("future-party.jpg", b"image-data", content_type="image/jpeg"),
+            is_published=True,
+        )
+        image_path = event.cover_image.path
+
+        self.client.get(reverse("homepage:home"))
+        event.refresh_from_db()
+
+        self.assertTrue(event.cover_image.name)
+        self.assertTrue(os.path.exists(image_path))
+
+    def test_past_event_cover_image_cleanup_runs_once_per_day(self):
+        first_event = Event.objects.create(
+            title="First Past Party",
+            event_date=timezone.localdate() - timedelta(days=1),
+            cover_image=SimpleUploadedFile("first-past-party.jpg", b"first-image", content_type="image/jpeg"),
+            is_published=True,
+        )
+        first_image_path = first_event.cover_image.path
+
+        self.client.get(reverse("homepage:home"))
+        first_event.refresh_from_db()
+
+        self.assertEqual(first_event.cover_image.name, "")
+        self.assertFalse(os.path.exists(first_image_path))
+
+        second_event = Event.objects.create(
+            title="Second Past Party",
+            event_date=timezone.localdate() - timedelta(days=1),
+            cover_image=SimpleUploadedFile("second-past-party.jpg", b"second-image", content_type="image/jpeg"),
+            is_published=True,
+        )
+        second_image_path = second_event.cover_image.path
+
+        self.client.get(reverse("homepage:home"))
+        second_event.refresh_from_db()
+
+        self.assertTrue(second_event.cover_image.name)
+        self.assertTrue(os.path.exists(second_image_path))

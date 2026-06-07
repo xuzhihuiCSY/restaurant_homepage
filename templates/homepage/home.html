@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ profile.description|default:profile.tagline }}">
     <title>{{ profile.name }}</title>
-    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260607-event-modal">
 </head>
 <body>
     <header class="site-header">
@@ -17,17 +17,9 @@
             <span>{{ profile.name }}</span>
         </a>
         <nav class="site-nav" aria-label="Main navigation">
-            <a href="#photos">Photos</a>
-            {% if profile.show_online_order and profile.online_order_url %}
-                <a href="#order-online">Order</a>
-            {% endif %}
             <a href="#recommendations">Today</a>
-            <a href="#reviews">Reviews</a>
             <a href="#events">Events</a>
             <a href="#contact">Contact</a>
-            {% if request.user.is_staff %}
-                <a href="{% url 'homepage:owner_dashboard' %}">Owner</a>
-            {% endif %}
         </nav>
     </header>
 
@@ -178,39 +170,128 @@
             </section>
         {% endif %}
 
+        {% if profile.show_group_reservation and profile.group_reservation_email %}
+            <section
+                id="group-reservation"
+                class="group-reservation-section {% if profile.group_reservation_background_image %}has-group-reservation-background{% endif %}"
+                {% if profile.group_reservation_background_image %}
+                    style="background-image: linear-gradient(90deg, rgba(20, 22, 20, 0.86) 0%, rgba(20, 22, 20, 0.7) 44%, rgba(20, 22, 20, 0.2) 100%), url('{{ profile.group_reservation_background_image.url }}');"
+                {% endif %}
+            >
+                <div class="group-reservation-copy">
+                    <p class="eyebrow">Groups</p>
+                    <h2>Group reservation</h2>
+                    <p>
+                        Planning a group visit? Email the manager to arrange seating,
+                        timing, and any special details before your event.
+                    </p>
+                    <a
+                        class="group-reservation-button"
+                        href="mailto:{{ profile.group_reservation_email }}?subject=Group%20reservation%20request"
+                    >
+                        BOOK A PARTY
+                    </a>
+                </div>
+            </section>
+        {% endif %}
+
         <section id="events" class="section">
             <div class="section-heading">
                 <p class="eyebrow">Events</p>
                 <h2>Upcoming dates</h2>
             </div>
-            {% if upcoming_events %}
-                <div class="event-list">
-                    {% for event in upcoming_events %}
-                        <article
-                            class="event-card {% if event.cover_image %}has-event-image{% endif %}"
-                            {% if event.cover_image %}
-                                style="--event-bg: url('{{ event.cover_image.url }}');"
-                            {% endif %}
-                        >
-                            <time datetime="{{ event.event_date|date:'Y-m-d' }}">
-                                {{ event.display_date_en }}
-                            </time>
-                            <div>
-                                <h3>{{ event.title }}</h3>
-                                {% if event.start_time %}
-                                    <p>{{ event.start_time|time:"g:i A" }}</p>
+            <div class="event-layout">
+                {% if upcoming_events %}
+                    <div class="event-list">
+                        {% for event in upcoming_events %}
+                            <article
+                                class="event-card {% if event.cover_image %}has-event-image{% endif %}"
+                                {% if event.cover_image %}
+                                    style="--event-bg: url('{{ event.cover_image.url }}');"
                                 {% endif %}
-                                {% if event.description %}
-                                    <p>{{ event.description }}</p>
+                            >
+                                <time datetime="{{ event.event_date|date:'Y-m-d' }}">
+                                    {{ event.display_date_en }}
+                                </time>
+                                <div>
+                                    <h3>{{ event.title }}</h3>
+                                    {% if event.start_time %}
+                                        <p>{{ event.start_time|time:"g:i A" }}</p>
+                                    {% endif %}
+                                    {% if event.description %}
+                                        <p>{{ event.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">Upcoming events will appear here.</p>
+                {% endif %}
+                <aside class="event-calendar" aria-label="Events calendar for {{ event_calendar.month_label }}">
+                    <div class="event-calendar-header">
+                        <p class="eyebrow">Calendar</p>
+                        <h3>{{ event_calendar.month_label }}</h3>
+                    </div>
+                    <div class="calendar-grid">
+                        {% for weekday in event_calendar.weekdays %}
+                            <div class="calendar-weekday">{{ weekday }}</div>
+                        {% endfor %}
+                        {% for week in event_calendar.weeks %}
+                            {% for day in week %}
+                                {% if day.events %}
+                                    <button
+                                        class="calendar-day calendar-day-button {% if not day.in_month %}muted-day{% endif %} {% if day.is_today %}today{% endif %} has-events"
+                                        type="button"
+                                    >
+                                {% else %}
+                                    <div
+                                        class="calendar-day {% if not day.in_month %}muted-day{% endif %} {% if day.is_today %}today{% endif %}"
+                                    >
                                 {% endif %}
-                            </div>
-                        </article>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="empty-state">Upcoming events will appear here.</p>
-            {% endif %}
+                                    <span>{{ day.day }}</span>
+                                    {% if day.events %}
+                                        <div class="calendar-events">
+                                            {% for event in day.events %}
+                                                <small>{{ event.title }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="calendar-event-details" hidden>
+                                            <h3>{{ day.date|date:"F j, Y" }}</h3>
+                                            {% for event in day.events %}
+                                                <article>
+                                                    <h4>{{ event.title }}</h4>
+                                                    {% if event.start_time %}
+                                                        <p>{{ event.start_time|time:"g:i A" }}</p>
+                                                    {% endif %}
+                                                    {% if event.description %}
+                                                        <p>{{ event.description }}</p>
+                                                    {% endif %}
+                                                </article>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% if day.events %}
+                                    </button>
+                                {% else %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </aside>
+            </div>
         </section>
+
+        <div class="event-modal" id="event-modal" aria-hidden="true">
+            <div class="event-modal-backdrop" data-event-modal-close></div>
+            <div class="event-modal-panel" role="dialog" aria-modal="true" aria-labelledby="event-modal-title">
+                <button class="event-modal-close" type="button" data-event-modal-close aria-label="Close event details">
+                    ×
+                </button>
+                <div class="event-modal-content" id="event-modal-title"></div>
+            </div>
+        </div>
 
         <section id="contact" class="section contact-section">
             <div>
@@ -236,6 +317,6 @@
             </div>
         </section>
     </main>
-    <script src="{% static 'homepage/js/home.js' %}" defer></script>
+    <script src="{% static 'homepage/js/home.js' %}?v=20260607-event-modal" defer></script>
 </body>
 </html>

@@ -13,6 +13,7 @@ MODEL_FILE_FIELDS = {
         "reviews_background_image",
         "online_order_image_left",
         "online_order_image_right",
+        "group_reservation_background_image",
     ],
     DailyRecommendation: ["image"],
     RestaurantPhoto: ["image"],

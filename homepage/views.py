@@ -1,7 +1,9 @@
+import calendar
 from types import SimpleNamespace
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -21,7 +23,13 @@ from .models import (
 )
 
 
+PAST_EVENT_COVER_CLEANUP_TIMEOUT = 60 * 60 * 48
+
+
 def home(request):
+    today = timezone.localdate()
+    _clear_past_event_cover_images_once(today)
+
     profile = RestaurantProfile.objects.first() or SimpleNamespace(
         name="Restaurant Name",
         tagline="Fresh food, warm service",
@@ -40,15 +48,12 @@ def home(request):
         hero_image=None,
     )
 
-    today = timezone.localdate()
-    recommendations = DailyRecommendation.objects.filter(
-        is_available=True,
-        display_date=today,
-    )[:6]
+    recommendations = DailyRecommendation.objects.filter(is_available=True)[:6]
     upcoming_events = Event.objects.filter(
         is_published=True,
         event_date__gte=today,
-    )[:3]
+    )[:5]
+    event_calendar = _build_event_calendar(today)
     restaurant_photos = RestaurantPhoto.objects.filter(is_visible=True)[:6]
     customer_reviews = CustomerReview.objects.filter(is_visible=True)[:3]
 
@@ -61,12 +66,16 @@ def home(request):
             "recommendations": recommendations,
             "customer_reviews": customer_reviews,
             "upcoming_events": upcoming_events,
+            "event_calendar": event_calendar,
         },
     )
 
 
 @staff_member_required
 def owner_dashboard(request):
+    today = timezone.localdate()
+    _clear_past_event_cover_images_once(today)
+
     profile = RestaurantProfile.objects.first()
     if profile is None:
         profile = RestaurantProfile.objects.create()
@@ -80,9 +89,8 @@ def owner_dashboard(request):
     else:
         profile_form = RestaurantProfileForm(instance=profile)
 
-    today = timezone.localdate()
     restaurant_photos = RestaurantPhoto.objects.all()[:12]
-    recommendations = DailyRecommendation.objects.filter(display_date__gte=today)[:12]
+    recommendations = DailyRecommendation.objects.all()[:12]
     customer_reviews = CustomerReview.objects.all()[:12]
     upcoming_events = Event.objects.filter(event_date__gte=today)[:8]
 
@@ -106,7 +114,7 @@ def recommendation_create(request):
         request,
         DailyRecommendationForm,
         "homepage/owner/form.html",
-        "Add today's recommended dish",
+        "Add recommended dish",
     )
 
 
@@ -268,3 +276,65 @@ def _confirm_delete(request, instance, title, message):
             "cancel_url": "homepage:owner_dashboard",
         },
     )
+
+
+def _clear_past_event_cover_images_once(today):
+    cache_key = f"homepage:past-event-cover-cleanup:{today.isoformat()}"
+    if not cache.add(cache_key, "running", PAST_EVENT_COVER_CLEANUP_TIMEOUT):
+        return
+
+    try:
+        _clear_past_event_cover_images(today)
+    except Exception:
+        cache.delete(cache_key)
+        raise
+
+    cache.set(cache_key, "done", PAST_EVENT_COVER_CLEANUP_TIMEOUT)
+
+
+def _clear_past_event_cover_images(today):
+    past_events_with_images = Event.objects.filter(
+        event_date__lt=today,
+    ).exclude(cover_image="")
+
+    for event in past_events_with_images:
+        event.cover_image = ""
+        event.save(update_fields=["cover_image"])
+
+
+def _build_event_calendar(today):
+    first_day = today.replace(day=1)
+    _, last_day_number = calendar.monthrange(today.year, today.month)
+    last_day = today.replace(day=last_day_number)
+    month_events = Event.objects.filter(
+        is_published=True,
+        event_date__gte=first_day,
+        event_date__lte=last_day,
+    )
+    events_by_day = {}
+
+    for event in month_events:
+        events_by_day.setdefault(event.event_date, []).append(event)
+
+    calendar_month = calendar.Calendar(firstweekday=6)
+    weeks = []
+
+    for week in calendar_month.monthdatescalendar(today.year, today.month):
+        weeks.append(
+            [
+                {
+                    "date": day,
+                    "day": day.day,
+                    "in_month": day.month == today.month,
+                    "is_today": day == today,
+                    "events": events_by_day.get(day, []),
+                }
+                for day in week
+            ]
+        )
+
+    return {
+        "month_label": today.strftime("%B %Y"),
+        "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "weeks": weeks,
+    }
