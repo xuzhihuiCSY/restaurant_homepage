@@ -122,6 +122,35 @@
             </div>
         </section>
 
+        <section class="panel settings-panel happy-hour-settings">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Specials</p>
+                    <h2>Happy hour</h2>
+                </div>
+            </div>
+            <div class="form-grid">
+                <label class="checkbox-row toggle-control wide">
+                    {{ profile_form.show_happy_hour }}
+                    <span>{{ profile_form.show_happy_hour.label }}</span>
+                    {{ profile_form.show_happy_hour.errors }}
+                </label>
+                <label class="field-control wide">
+                    <span>{{ profile_form.happy_hour_schedule.label }}</span>
+                    {{ profile_form.happy_hour_schedule }}
+                    {{ profile_form.happy_hour_schedule.errors }}
+                </label>
+                <label class="field-control wide">
+                    <span>{{ profile_form.happy_hour_items.label }}</span>
+                    {{ profile_form.happy_hour_items }}
+                    {{ profile_form.happy_hour_items.errors }}
+                </label>
+            </div>
+            <div class="panel-actions">
+                <button class="button primary" type="submit">Save happy hour</button>
+            </div>
+        </section>
+
         <section class="panel settings-panel group-reservation-settings">
             <div class="panel-heading">
                 <div>

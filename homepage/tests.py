@@ -67,6 +67,59 @@ class HomePageTests(TestCase):
 
         self.assertContains(response, "Lunch Special")
 
+    def test_happy_hour_section_renders_when_visible(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            show_happy_hour=True,
+            happy_hour_schedule="Monday-Friday\n4:00 PM - 6:00 PM",
+            happy_hour_items="Wings\nDraft beer\nKaraoke snacks",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+        content = response.content.decode()
+
+        self.assertContains(response, 'id="happy-hour"')
+        self.assertContains(response, "Happy hour")
+        self.assertContains(response, "Monday-Friday")
+        self.assertContains(response, "4:00 PM - 6:00 PM")
+        self.assertContains(response, "Wings")
+        self.assertContains(response, "Draft beer")
+        self.assertLess(content.index("Chef recommended dishes"), content.index('id="happy-hour"'))
+        self.assertLess(content.index('id="happy-hour"'), content.index("What guests say"))
+
+    def test_happy_hour_section_stays_hidden_when_disabled(self):
+        RestaurantProfile.objects.create(
+            name="Test Restaurant",
+            show_happy_hour=False,
+            happy_hour_schedule="Monday-Friday 4:00 PM - 6:00 PM",
+            happy_hour_items="Wings",
+        )
+
+        response = self.client.get(reverse("homepage:home"))
+
+        self.assertNotContains(response, 'id="happy-hour"')
+        self.assertNotContains(response, "Monday-Friday 4:00 PM - 6:00 PM")
+
+    def test_happy_hour_schedule_required_when_section_visible(self):
+        profile = RestaurantProfile(
+            name="Test Restaurant",
+            show_happy_hour=True,
+            happy_hour_items="Wings",
+        )
+
+        with self.assertRaises(ValidationError):
+            profile.full_clean()
+
+    def test_happy_hour_items_required_when_section_visible(self):
+        profile = RestaurantProfile(
+            name="Test Restaurant",
+            show_happy_hour=True,
+            happy_hour_schedule="Monday-Friday 4:00 PM - 6:00 PM",
+        )
+
+        with self.assertRaises(ValidationError):
+            profile.full_clean()
+
     def test_event_date_renders_in_english(self):
         Event.objects.create(
             title="Karaoke Night",
@@ -262,10 +315,12 @@ class OwnerControlsTests(TestCase):
         self.assertContains(response, "Review highlights")
         self.assertContains(response, "Logo")
         self.assertContains(response, "Online order")
+        self.assertContains(response, "Happy hour")
         self.assertContains(response, "Group reservation")
         self.assertContains(response, "Reviews background image")
         self.assertLess(content.index("Homepage details"), content.index("Online order"))
-        self.assertLess(content.index("Online order"), content.index("Group reservation"))
+        self.assertLess(content.index("Online order"), content.index("Happy hour"))
+        self.assertLess(content.index("Happy hour"), content.index("Group reservation"))
         self.assertLess(content.index("Group reservation"), content.index("Review highlights"))
         self.assertLess(content.index("Review highlights"), content.index("Reviews background image"))
         self.assertLess(content.index("Reviews background image"), content.index("Restaurant photo display"))

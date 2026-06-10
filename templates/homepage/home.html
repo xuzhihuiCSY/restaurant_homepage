@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ profile.description|default:profile.tagline }}">
     <title>{{ profile.name }}</title>
-    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260608-restaurant-detail">
+    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260610-happy-hour">
 </head>
 <body>
     <header class="site-header">
@@ -102,6 +102,24 @@
                 <p class="empty-state">Today's recommended dishes are coming soon.</p>
             {% endif %}
         </section>
+
+        {% if profile.show_happy_hour %}
+            <section id="happy-hour" class="happy-hour-section">
+                <div class="happy-hour-copy">
+                    <p class="eyebrow">Specials</p>
+                    <h2>Happy hour</h2>
+                    <div class="happy-hour-detail">
+                        <strong>Weekly time</strong>
+                        <p>{{ profile.happy_hour_schedule|linebreaksbr }}</p>
+                    </div>
+                </div>
+                <div class="happy-hour-menu">
+                    <p class="eyebrow">Menu</p>
+                    <h3>Happy hour dishes</h3>
+                    <p>{{ profile.happy_hour_items|linebreaksbr }}</p>
+                </div>
+            </section>
+        {% endif %}
 
         <section
             id="reviews"

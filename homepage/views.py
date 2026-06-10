@@ -293,6 +293,9 @@ def _get_restaurant_profile():
         show_group_reservation=False,
         group_reservation_email="",
         group_reservation_background_image=None,
+        show_happy_hour=False,
+        happy_hour_schedule="",
+        happy_hour_items="",
         hero_image=None,
         reviews_background_image=None,
     )

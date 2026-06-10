@@ -50,11 +50,16 @@ class RestaurantProfileForm(forms.ModelForm):
             "show_group_reservation",
             "group_reservation_email",
             "group_reservation_background_image",
+            "show_happy_hour",
+            "happy_hour_schedule",
+            "happy_hour_items",
             "hero_image",
             "reviews_background_image",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "happy_hour_schedule": forms.Textarea(attrs={"rows": 3}),
+            "happy_hour_items": forms.Textarea(attrs={"rows": 5}),
             "logo": ReplaceOnlyFileInput,
             "online_order_image_left": ReplaceOnlyFileInput,
             "online_order_image_right": ReplaceOnlyFileInput,

@@ -44,6 +44,18 @@ class RestaurantProfile(models.Model):
         upload_to="restaurant/",
         blank=True,
     )
+    show_happy_hour = models.BooleanField(
+        "show happy hour section",
+        default=False,
+    )
+    happy_hour_schedule = models.TextField(
+        "weekly happy hour time",
+        blank=True,
+    )
+    happy_hour_items = models.TextField(
+        "happy hour dishes",
+        blank=True,
+    )
     hero_image = models.ImageField(upload_to="restaurant/", blank=True)
     reviews_background_image = models.ImageField(upload_to="restaurant/", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -67,6 +79,10 @@ class RestaurantProfile(models.Model):
             errors["group_reservation_email"] = "Manager email is required when the group reservation section is visible."
         if self.show_group_reservation and not self.group_reservation_background_image:
             errors["group_reservation_background_image"] = "Background image is required when the group reservation section is visible."
+        if self.show_happy_hour and not self.happy_hour_schedule:
+            errors["happy_hour_schedule"] = "Weekly happy hour time is required when the section is visible."
+        if self.show_happy_hour and not self.happy_hour_items:
+            errors["happy_hour_items"] = "Happy hour dishes are required when the section is visible."
         if errors:
             raise ValidationError(errors)
 
