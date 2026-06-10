@@ -30,23 +30,7 @@ def home(request):
     today = timezone.localdate()
     _clear_past_event_cover_images_once(today)
 
-    profile = RestaurantProfile.objects.first() or SimpleNamespace(
-        name="Restaurant Name",
-        tagline="Fresh food, warm service",
-        description="A simple Django-powered restaurant homepage.",
-        phone="",
-        email="",
-        primary_contact_method=RestaurantProfile.CONTACT_PHONE,
-        address="",
-        opening_hours="",
-        map_url="",
-        logo=None,
-        show_online_order=False,
-        online_order_url="",
-        online_order_image_left=None,
-        online_order_image_right=None,
-        hero_image=None,
-    )
+    profile = _get_restaurant_profile()
 
     recommendations = DailyRecommendation.objects.filter(is_available=True)[:6]
     upcoming_events = Event.objects.filter(
@@ -67,6 +51,18 @@ def home(request):
             "customer_reviews": customer_reviews,
             "upcoming_events": upcoming_events,
             "event_calendar": event_calendar,
+        },
+    )
+
+
+def restaurant_detail(request):
+    profile = _get_restaurant_profile()
+
+    return render(
+        request,
+        "homepage/restaurant_detail.html",
+        {
+            "profile": profile,
         },
     )
 
@@ -275,6 +271,30 @@ def _confirm_delete(request, instance, title, message):
             "message": message,
             "cancel_url": "homepage:owner_dashboard",
         },
+    )
+
+
+def _get_restaurant_profile():
+    return RestaurantProfile.objects.first() or SimpleNamespace(
+        name="Restaurant Name",
+        tagline="Fresh food, warm service",
+        description="A simple Django-powered restaurant homepage.",
+        phone="",
+        email="",
+        primary_contact_method=RestaurantProfile.CONTACT_PHONE,
+        address="",
+        opening_hours="",
+        map_url="",
+        logo=None,
+        show_online_order=False,
+        online_order_url="",
+        online_order_image_left=None,
+        online_order_image_right=None,
+        show_group_reservation=False,
+        group_reservation_email="",
+        group_reservation_background_image=None,
+        hero_image=None,
+        reviews_background_image=None,
     )
 
 

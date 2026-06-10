@@ -1,0 +1,87 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ profile.description|default:profile.tagline }}">
+    <title>{{ profile.name }} | Restaurant Details</title>
+    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260608-restaurant-detail">
+</head>
+<body class="restaurant-detail-page">
+    <header class="site-header restaurant-detail-header">
+        <a class="brand" href="{% url 'homepage:home' %}">
+            {% if profile.logo %}
+                <img src="{{ profile.logo.url }}" alt="{{ profile.name }} logo">
+            {% endif %}
+            <span>{{ profile.name }}</span>
+        </a>
+        <nav class="site-nav" aria-label="Restaurant detail navigation">
+            <a href="{% url 'homepage:home' %}">Home</a>
+        </nav>
+    </header>
+
+    <main class="restaurant-detail">
+        <section class="restaurant-detail-hero">
+            <div class="restaurant-detail-copy">
+                {% if profile.logo %}
+                    <img class="restaurant-detail-logo" src="{{ profile.logo.url }}" alt="{{ profile.name }} logo">
+                {% endif %}
+                <p class="eyebrow">Restaurant</p>
+                <h1>{{ profile.name }}</h1>
+                {% if profile.description %}
+                    <p>{{ profile.description }}</p>
+                {% elif profile.tagline %}
+                    <p>{{ profile.tagline }}</p>
+                {% else %}
+                    <p>Fresh food, warm service, and a simple place to gather.</p>
+                {% endif %}
+            </div>
+            <div class="restaurant-detail-media">
+                {% if profile.hero_image %}
+                    <img src="{{ profile.hero_image.url }}" alt="{{ profile.name }}">
+                {% else %}
+                    <div class="hero-placeholder">{{ profile.name }}</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="restaurant-location-section" aria-labelledby="restaurant-location-title">
+            <div class="restaurant-location-copy">
+                <p class="eyebrow">Location</p>
+                <h2 id="restaurant-location-title">Visit us</h2>
+                {% if profile.address %}
+                    <p class="restaurant-address">{{ profile.address }}</p>
+                {% else %}
+                    <p class="restaurant-address">Location details will appear here.</p>
+                {% endif %}
+                {% if profile.map_url %}
+                    <a class="button primary" href="{{ profile.map_url }}" target="_blank" rel="noopener">
+                        Open map
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="restaurant-map">
+                {% if profile.address %}
+                    <iframe
+                        title="Map for {{ profile.name }}"
+                        src="https://maps.google.com/maps?q={{ profile.address|urlencode }}&output=embed"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                {% elif profile.map_url %}
+                    <iframe
+                        title="Map for {{ profile.name }}"
+                        src="{{ profile.map_url }}"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                {% else %}
+                    <div class="restaurant-map-placeholder">Map will appear here.</div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

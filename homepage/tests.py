@@ -21,9 +21,41 @@ class HomePageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Restaurant Name")
+        self.assertContains(response, reverse("homepage:restaurant_detail"))
         self.assertContains(response, "Restaurant photos")
         self.assertContains(response, "Chef recommended dishes")
         self.assertContains(response, "What guests say")
+
+    def test_restaurant_detail_page_renders_profile_only(self):
+        RestaurantProfile.objects.create(
+            name="Detail Restaurant",
+            description="A focused restaurant detail page.",
+            address="123 Main Street, Seattle, WA",
+            map_url="https://maps.example.com/detail-restaurant",
+            logo="restaurant/logo.png",
+            hero_image="restaurant/hero.jpg",
+        )
+        DailyRecommendation.objects.create(name="Hidden Dish", price="12.50")
+        Event.objects.create(
+            title="Hidden Event",
+            event_date=timezone.localdate() + timedelta(days=1),
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("homepage:restaurant_detail"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Detail Restaurant")
+        self.assertContains(response, "A focused restaurant detail page.")
+        self.assertContains(response, "123 Main Street, Seattle, WA")
+        self.assertContains(response, "restaurant/logo.png")
+        self.assertContains(response, "restaurant/hero.jpg")
+        self.assertContains(response, "maps.google.com/maps")
+        self.assertContains(response, 'href="https://maps.example.com/detail-restaurant"')
+        self.assertNotContains(response, "Chef recommended dishes")
+        self.assertNotContains(response, "Upcoming dates")
+        self.assertNotContains(response, "Hidden Dish")
+        self.assertNotContains(response, "Hidden Event")
 
     def test_recommendation_renders_on_homepage_without_date_setup(self):
         DailyRecommendation.objects.create(

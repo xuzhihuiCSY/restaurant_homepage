@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ profile.description|default:profile.tagline }}">
     <title>{{ profile.name }}</title>
-    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260607-event-modal">
+    <link rel="stylesheet" href="{% static 'homepage/css/home.css' %}?v=20260608-restaurant-detail">
 </head>
 <body>
     <header class="site-header">
@@ -17,7 +17,7 @@
             <span>{{ profile.name }}</span>
         </a>
         <nav class="site-nav" aria-label="Main navigation">
-            <a href="#recommendations">Today</a>
+            <a href="{% url 'homepage:restaurant_detail' %}">Restaurant</a>
             <a href="#events">Events</a>
             <a href="#contact">Contact</a>
         </nav>
